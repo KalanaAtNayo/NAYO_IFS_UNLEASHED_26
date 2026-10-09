@@ -1,0 +1,1639 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NayoDM for IFS Cloud</title>
+<meta name="description" content="Load clean data into IFS Cloud the first time. NayoDM is the right-sized migration tool: connect any source, map and transform fields, pre-flight every row, and load at full volume.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<script>document.documentElement.classList.add("js")</script>
+<style>
+  :root {
+    --ground: #140520;
+    --ground-deep: #0C0214;
+    --surface: #1E0B2E;
+    --surface-2: #2A1240;
+    --line: #3A1F55;
+    --line-soft: #2C1642;
+    --ink: #EDE6F5;
+    --ink-muted: #9E8FB2;
+    --ink-dim: #6F5F85;
+    --mint: #17F1C2;
+    --indigo: #647CFF;
+    --lime: #AFF777;
+    --warn: #FFB84D;
+    --error: #EA492E;
+
+    --step-1: 1.15rem;
+    --step-2: clamp(1.35rem, 1.1rem + 0.9vw, 1.75rem);
+    --step-3: clamp(1.7rem, 1.3rem + 1.6vw, 2.5rem);
+    --step-4: clamp(2.2rem, 1.5rem + 3vw, 3.9rem);
+
+    --pad: clamp(1.25rem, 5vw, 6rem);
+    --maxw: 1220px;
+    --on-mint: #06180F;
+    color-scheme: dark;
+  }
+  /* light theme: explicit choice, or OS preference when none is stored */
+  :root[data-theme="light"] {
+    --ground: #F8F5FC; --ground-deep: #EEE8F6; --surface: #FFFFFF; --surface-2: #F1EBF8;
+    --line: #CDBFE0; --line-soft: #DDD3EA;
+    --ink: #1E0B2E; --ink-muted: #54446A; --ink-dim: #75678A;
+    --mint: #007F67; --indigo: #3F57E0; --lime: #3F7A0A; --warn: #A85F00;
+    --on-mint: #FFFFFF;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+      --ground: #F8F5FC; --ground-deep: #EEE8F6; --surface: #FFFFFF; --surface-2: #F1EBF8;
+    --line: #CDBFE0; --line-soft: #DDD3EA;
+    --ink: #1E0B2E; --ink-muted: #54446A; --ink-dim: #75678A;
+    --mint: #007F67; --indigo: #3F57E0; --lime: #3F7A0A; --warn: #A85F00;
+    --on-mint: #FFFFFF;
+    color-scheme: light;
+    }
+  }
+  
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: Barlow, "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.3s, color 0.3s;
+  }
+  h1, h2, h3, h4 { text-wrap: balance; margin: 0; line-height: 1.12; font-weight: 600; letter-spacing: -0.015em; }
+  p { margin: 0; }
+  a { color: inherit; }
+  svg { display: block; }
+  figure { margin: 0; }
+
+  .wrap { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--pad); }
+  .eyebrow {
+    font-family: "Barlow Condensed", Barlow, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--mint);
+  }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .badge-row { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+  .pill {
+    background: var(--mint); color: var(--on-mint); padding: 0.5rem 1rem; border-radius: 2px;
+    font-family: "Barlow Condensed", Barlow, sans-serif; font-weight: 700; font-size: 0.92rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .badge-row .eyebrow { color: var(--indigo); font-size: 1.15rem; letter-spacing: 0.06em; }
+  .lede { color: var(--ink-muted); font-size: var(--step-1); max-width: 62ch; }
+  .h-sec { font-size: var(--step-3); margin-block: 0.7rem 1rem; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.7rem 1.35rem; border-radius: 2px;
+    font-weight: 600; font-size: 0.97rem; text-decoration: none;
+    border: 1px solid transparent; cursor: pointer;
+    transition: transform 0.16s, background 0.16s, border-color 0.16s, color 0.16s;
+  }
+  .btn-primary { background: var(--mint); color: var(--on-mint); }
+  .btn-primary:hover { filter: brightness(1.12); transform: translateY(-1px); }
+  .btn-ghost { border-color: var(--line); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--mint); color: var(--mint); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line-soft); }
+  .hero::before {
+    content: ""; position: absolute; inset: -40% 30% 40% -20%;
+    background: radial-gradient(closest-side, rgba(100, 124, 255, 0.20), transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: ""; position: absolute; right: -10%; top: 8%; width: 55%; aspect-ratio: 1;
+    background: radial-gradient(closest-side, rgba(23, 241, 194, 0.13), transparent 72%);
+    pointer-events: none;
+  }
+  .hero-in {
+    position: relative; display: grid; gap: clamp(2rem, 4vw, 4rem);
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: clamp(2.5rem, 4.5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  @media (min-width: 980px) { .hero-in { grid-template-columns: 1.05fr 1fr; align-items: start; } }
+  h1 { font-size: var(--step-4); margin-block: 1rem 1.15rem; }
+  h1 em { font-style: normal; color: var(--mint); }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.8rem; }
+  .hero-meta { display: flex; flex-wrap: wrap; gap: 1.4rem 2.4rem; margin-top: 2.4rem; padding-top: 1.6rem; border-top: 1px solid var(--line-soft); }
+  .hero-meta div { display: flex; flex-direction: column; }
+  .hero-meta b { font-family: "Barlow Condensed", Barlow, sans-serif; font-size: 1.9rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .hero-meta span { font-size: 0.86rem; color: var(--ink-dim); letter-spacing: 0.02em; }
+
+  /* ---------- sections ---------- */
+  section { padding-block: clamp(3.5rem, 7vw, 6.5rem); }
+  .section-head { max-width: 68ch; }
+  .split { display: grid; gap: clamp(2rem, 4vw, 4.5rem); align-items: start; }
+  @media (min-width: 920px) {
+    .split { grid-template-columns: 1fr 1fr; }
+    .split.flip > .art { order: -1; }
+  }
+  /* diagram columns get the larger share so their labels stay legible */
+  @media (min-width: 920px) and (max-width: 1179px) {
+    .split:has(> .art) { grid-template-columns: minmax(0, 1fr); }
+    .split.flip > .art { order: 0; }
+    .split > .art { max-width: 760px; }
+  }
+  @media (min-width: 1180px) {
+    .split:has(> .art) { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
+    .split.flip:has(> .art) { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); }
+  }
+
+  .feature-list { list-style: none; margin: 1.6rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.85rem; }
+  .feature-list li { position: relative; padding-left: 1.6rem; color: var(--ink-muted); }
+  .feature-list li::before {
+    content: ""; position: absolute; left: 0; top: 0.62em;
+    width: 7px; height: 7px; border-radius: 50%; background: var(--mint);
+  }
+  .feature-list b { color: var(--ink); font-weight: 600; }
+
+  .band { background: var(--ground-deep); border-block: 1px solid var(--line-soft); }
+
+  /* ---------- capability grid ---------- */
+  .grid-3 { display: grid; gap: 1px; background: var(--line-soft); border: 1px solid var(--line-soft); margin-top: 2.6rem; }
+  @media (min-width: 700px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1040px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+  .cell { background: var(--ground); padding: 1.7rem 1.6rem 1.8rem; display: flex; flex-direction: column; gap: 0.55rem; }
+  .cell h3 { font-size: 1.12rem; }
+  .cell p { color: var(--ink-muted); font-size: 0.97rem; }
+  .cell .tag {
+    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim);
+    font-family: "Barlow Condensed", Barlow, sans-serif; font-weight: 600;
+  }
+
+  /* ---------- stats ---------- */
+  .stats-band { background: var(--ground-deep); border-block: 1px solid var(--line-soft); }
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 860px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+  /* first column flush to the page's content edge, last flush to its right edge,
+     equal gutters either side of each divider */
+  .stat { padding: 1.9rem 0 2rem; display: flex; flex-direction: column; }
+  .stat + .stat { border-top: 1px solid var(--line-soft); padding-top: 1.9rem; }
+  @media (min-width: 860px) {
+    .stat { padding: 2.6rem 1.9rem; }
+    .stat:first-child { padding-left: 0; }
+    .stat:last-child { padding-right: 0; }
+    .stat + .stat { border-top: 0; border-left: 1px solid var(--line-soft); padding-top: 2.6rem; }
+  }
+  .stat b {
+    font-family: "Barlow Condensed", Barlow, sans-serif;
+    font-size: clamp(2.4rem, 4vw, 3.2rem); font-weight: 700; line-height: 1;
+    color: var(--mint); font-variant-numeric: tabular-nums;
+  }
+  .stat span { margin-top: 0.6rem; color: var(--ink-muted); font-size: 0.92rem; line-height: 1.45; max-width: 24ch; }
+  .stats .stat:nth-child(2) b { color: var(--indigo); }
+  .stats .stat:nth-child(3) b { color: var(--lime); }
+  .stats .stat:nth-child(4) b { color: var(--ink); }
+
+  /* ---------- quote ---------- */
+  .quote { border-left: 2px solid var(--mint); padding-left: 1.6rem; max-width: 64ch; }
+  .quote p { font-size: var(--step-2); line-height: 1.4; font-weight: 500; }
+  .quote cite { display: block; margin-top: 1rem; font-style: normal; color: var(--ink-dim); font-size: 0.92rem; }
+
+  /* ---------- cta ---------- */
+  .cta-in { display: grid; gap: 1.6rem; align-items: center; }
+  @media (min-width: 880px) { .cta-in { grid-template-columns: 1.4fr auto; } }
+
+  /* ---------- diagram shell ---------- */
+  .art { border: 1px solid var(--line-soft); background: linear-gradient(180deg, var(--surface), var(--ground)); padding: clamp(1rem, 2vw, 1.6rem); overflow-x: auto; }
+  .art-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 0.9rem; flex-wrap: wrap; }
+  .art-head .mono { font-size: 0.76rem; color: var(--ink-dim); letter-spacing: 0.02em; }
+  .art svg { width: 100%; height: auto; min-width: 480px; }
+  .art text { font-family: Barlow, "Helvetica Neue", Arial, sans-serif; }
+  .art .code { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; }
+
+  /* diagram motion lives in animation/*.svg - each file carries its own keyframes */
+  .art img { display: block; width: 100%; height: auto; }
+
+  /* ---------- NayoAI mark ---------- */
+  .ai-mark { display: inline-flex; align-items: center; gap: 0.45rem; margin-bottom: 0.9rem; }
+  .ai-mark svg { width: 22px; height: 22px; display: block; overflow: visible; }
+  .ai-mark .spark-a { animation: ai-breathe 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .ai-mark .spark-b { animation: ai-twinkle 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes ai-breathe { 0%, 100% { opacity: 0.85; transform: scale(0.92); } 50% { opacity: 1; transform: scale(1); } }
+  @keyframes ai-twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1); } }
+  .ai-mark span { font-family: "Barlow Condensed", Barlow, sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); }
+  @media (prefers-reduced-motion: reduce) {
+    .ai-mark .spark-a, .ai-mark .spark-b { animation: none; }
+  }
+
+  /* ---------- product lockup ---------- */
+  .lockup { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.2rem; }
+  .lockup img { width: 46px; height: 46px; flex: none; }
+  .lockup img.logo { height: 64px; width: auto; display: block; }
+
+  .lockup .name { font-family: "Barlow Condensed", Barlow, sans-serif; font-size: 1.45rem; font-weight: 700; letter-spacing: 0.02em; line-height: 1; }
+  .lockup .eyebrow { display: block; margin-top: 0.3rem; }
+
+  /* ---------- challenge cards ---------- */
+  .challenge { display: grid; gap: 1px; background: var(--line-soft); border: 1px solid var(--line-soft); margin-top: 2.4rem; }
+  @media (min-width: 820px) { .challenge { grid-template-columns: repeat(3, 1fr); } }
+  .challenge > div { background: var(--ground); padding: 1.8rem 1.7rem 2rem; display: flex; flex-direction: column; gap: 0.7rem; }
+  .challenge h3 { font-size: 1.08rem; }
+  .challenge p { color: var(--ink-muted); font-size: 0.97rem; }
+  .challenge .cost { margin-top: auto; padding-top: 1rem; font-size: 0.82rem; color: var(--warn); font-family: "IBM Plex Mono", monospace; }
+
+  /* ---------- import sources ---------- */
+  .sources { display: grid; gap: 1px; background: var(--line-soft); border: 1px solid var(--line-soft); margin-top: 1.8rem; }
+  @media (min-width: 560px) { .sources { grid-template-columns: 1fr 1fr; } }
+  .src { background: var(--ground); padding: 1.3rem 1.4rem 1.4rem; display: flex; flex-direction: column; gap: 0.45rem; }
+  .src h3 { font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; }
+  .src p { color: var(--ink-muted); font-size: 0.93rem; }
+  .src .kind {
+    font-family: "Barlow Condensed", Barlow, sans-serif; font-size: 0.72rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-dim); font-weight: 600;
+  }
+  /* the two IFS environments are read directly - given the accent, the file
+     sources stay quiet beside them */
+  .src--direct { background: linear-gradient(180deg, rgba(23, 241, 194, 0.05), transparent 60%), var(--ground); }
+  .src--direct .kind { color: var(--mint); }
+  .src--direct h3::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--mint); flex: none;
+  }
+
+  /* ---------- workflow jobs ---------- */
+  .jobs { list-style: none; margin: 1.8rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 1px; background: var(--line-soft); border: 1px solid var(--line-soft); }
+  .jobs li { background: var(--ground); padding: 1rem 1.2rem; display: grid; gap: 0.15rem 1.2rem; }
+  @media (min-width: 620px) { .jobs li { grid-template-columns: 1fr auto; align-items: baseline; } }
+  .jobs b { color: var(--ink); font-weight: 600; }
+  .jobs span { color: var(--ink-muted); font-size: 0.93rem; }
+  .jobs .when { font-family: "IBM Plex Mono", monospace; font-size: 0.8rem; color: var(--mint); white-space: nowrap; }
+
+  /* ---------- scenarios ---------- */
+  .scenarios { width: 100%; margin-top: 2.4rem; border-collapse: collapse; font-size: 0.95rem; min-width: 720px; }
+  .scenarios th, .scenarios td { text-align: left; padding: 0.95rem 1.4rem 0.95rem 0; vertical-align: top; border-bottom: 1px solid var(--line-soft); }
+  .scenarios thead th {
+    font-family: "Barlow Condensed", Barlow, sans-serif; font-size: 0.78rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--ink-dim); font-weight: 600; padding-bottom: 0.7rem;
+  }
+  .scenarios tbody th { font-weight: 600; color: var(--ink); width: 24%; }
+  .scenarios td { color: var(--ink-muted); }
+  .scenarios .scale { font-family: "IBM Plex Mono", monospace; font-size: 0.86rem; color: var(--mint); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .scenarios tbody tr:last-child th, .scenarios tbody tr:last-child td { border-bottom: 0; }
+  .table-scroll { overflow-x: auto; }
+
+  /* ---------- demo ---------- */
+  .demo-frame { border: 1px solid var(--line-soft); background: var(--ground-deep); aspect-ratio: 16 / 9; position: relative; overflow: hidden; }
+  .demo-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .demo-facade { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; cursor: pointer; border: 0; width: 100%; background: radial-gradient(closest-side at 50% 45%, rgba(23, 241, 194, 0.10), transparent 70%), var(--ground-deep); color: inherit; font: inherit; }
+  .demo-facade:hover .play { transform: scale(1.06); border-color: var(--mint); }
+  .play { width: 66px; height: 66px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; transition: transform 0.18s, border-color 0.18s; background: rgba(23, 241, 194, 0.08); }
+  .play svg { width: 20px; height: 20px; }
+  .demo-facade .label { font-family: "Barlow Condensed", Barlow, sans-serif; letter-spacing: 0.16em; text-transform: uppercase; font-size: 0.82rem; color: var(--ink-muted); }
+  .demo-facade img { width: 40px; height: 40px; }
+  .demo-note { margin-top: 0.9rem; font-size: 0.85rem; color: var(--ink-dim); }
+  .demo-chapters { list-style: none; margin: 1.6rem 0 0; padding: 0; display: grid; gap: 0.7rem; }
+  .demo-chapters li { display: grid; grid-template-columns: 3.6rem 1fr; gap: 0.9rem; color: var(--ink-muted); font-size: 0.97rem; }
+  .demo-chapters .t { font-family: "IBM Plex Mono", monospace; font-size: 0.85rem; color: var(--mint); }
+
+  /* ---------- theme toggle ---------- */
+  .theme-toggle {
+    position: fixed; top: 1rem; right: 1rem; z-index: 50; width: 42px; height: 42px;
+    display: grid; place-items: center; border-radius: 50%; cursor: pointer;
+    background: var(--surface); color: var(--ink); border: 1px solid var(--line);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .theme-toggle:hover { transform: rotate(18deg) scale(1.06); border-color: var(--mint); }
+  .theme-toggle svg { width: 20px; height: 20px; }
+  .theme-toggle .sun { display: none; }
+  :root[data-theme="light"] .theme-toggle .sun { display: block; }
+  :root[data-theme="light"] .theme-toggle .moon { display: none; }
+
+  /* ---------- scroll reveal ---------- */
+  .js .rv { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; transition-delay: var(--d, 0s); }
+  .js .rv.in { opacity: 1; transform: none; }
+  .cell, .src, .challenge > div { transition: background 0.25s, transform 0.25s; }
+  .cell:hover, .src:hover, .challenge > div:hover { transform: translateY(-3px); }
+
+  /* ---------- AI feature carousel ---------- */
+  .carousel { margin-top: 1.8rem; border: 1px solid var(--line-soft); background: var(--surface); padding: 1.6rem 1.6rem 1.2rem; }
+  .c-stage { display: grid; }
+  .c-slide { grid-area: 1 / 1; opacity: 0; transform: translateX(28px); visibility: hidden; transition: opacity 0.5s, transform 0.5s, visibility 0.5s; }
+  .c-slide.on { opacity: 1; transform: none; visibility: visible; }
+  .c-slide .n { font-family: "IBM Plex Mono", monospace; font-size: 0.8rem; color: var(--mint); }
+  .c-slide b { display: block; margin-top: 0.4rem; font-size: var(--step-2); color: var(--ink); font-weight: 600; line-height: 1.2; }
+  .c-slide span { display: block; margin-top: 0.5rem; color: var(--ink-muted); }
+  .c-dots { display: flex; gap: 0.5rem; margin-top: 1.4rem; }
+  .c-dots button { flex: 1; height: 19px; padding: 0; background: none; border: 0; cursor: pointer; position: relative; }
+  .c-dots button::before, .c-dots button::after { content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 3px; }
+  .c-dots button::before { background: var(--line); }
+  .c-dots button::after { background: var(--mint); transform: scaleX(0); transform-origin: left; }
+  .c-dots button.on::after { animation: c-fill var(--ms, 5000ms) linear forwards; }
+  .carousel.paused .c-dots button.on::after { animation-play-state: paused; }
+  @keyframes c-fill { to { transform: scaleX(1); } }
+  @media (prefers-reduced-motion: reduce) {
+    .js .rv { opacity: 1; transform: none; transition: none; }
+    .c-slide { transition: none; transform: none; }
+    .c-dots button.on::after { animation: none; transform: scaleX(1); }
+  }
+
+  /* ---------- carousel slide layout + feature animations ---------- */
+  .carousel { padding: clamp(1.2rem, 2.5vw, 2rem); }
+  .c-slide { display: grid; gap: 1.6rem; align-items: center; transform: none; }
+  .c-slide:not(.on) { transform: translateX(28px); }
+  @media (min-width: 760px) { .c-slide { grid-template-columns: 0.9fr 1.1fr; } }
+  .c-vis { background: var(--surface-2); border: 1px solid var(--line-soft); padding: 0.8rem; }
+  .vis { width: 100%; height: auto; }
+  .vis .bx { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+  .vis .bx.mt { stroke: var(--mint); }
+  .vis .bx.er { stroke: var(--error); }
+  .vis .bx.wr { stroke: var(--warn); }
+  .vis .tx { font-size: 10px; fill: var(--ink); }
+  .vis .mono { font-family: "IBM Plex Mono", monospace; font-size: 9.5px; }
+  .vis .dim { fill: var(--ink-dim); }
+  .vis .mc { fill: var(--mint); } .vis .wc { fill: var(--warn); } .vis .ec { fill: var(--error); }
+  .vis .trk { fill: var(--line-soft); } .vis .bar { fill: var(--mint); } .vis .bar.wf { fill: var(--warn); }
+  .vis .ln { fill: none; stroke-width: 1.4; stroke-dasharray: 4 4; }
+  .vis .ln.i { stroke: var(--indigo); } .vis .ln.m { stroke: var(--mint); }
+  .vis .core { fill: var(--mint); fill-opacity: 0.15; stroke: var(--mint); }
+  .vis .spark { fill: var(--mint); }
+  .vis .cv { fill: var(--surface); }
+  .vis .scan { fill: var(--error); fill-opacity: 0.14; }
+  .vis .okb { fill: var(--mint); fill-opacity: 0.12; }
+  .vis .an { transform-box: fill-box; transform-origin: center; }
+  .c-slide.on .an { animation-duration: 0.6s; animation-delay: var(--d, 0s); animation-fill-mode: both; animation-timing-function: ease-out; }
+  .c-slide.on .pop { animation-name: v-pop; }
+  .c-slide.on .slide { animation-name: v-slide; }
+  .c-slide.on .grow { animation-name: v-grow; transform-origin: left; animation-duration: 0.9s; }
+  .c-slide.on .unc { animation-name: v-unc; transform-origin: right; animation-duration: var(--t, 0.8s); animation-timing-function: steps(14, end); }
+  .c-slide.on .flow { animation: v-pop 0.6s var(--d, 0s) both, v-dash 1s linear infinite; }
+  .c-slide.on .pulse { animation: v-pop 0.6s var(--d, 0s) both, v-pulse 1.6s ease-in-out calc(var(--d, 0s) + 0.6s) infinite; }
+  .c-slide.on .sweep { animation: v-sweep 2s ease-in-out 0.8s both; }
+  @keyframes v-pop { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: none; } }
+  @keyframes v-slide { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+  @keyframes v-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes v-unc { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+  @keyframes v-dash { to { stroke-dashoffset: -16; } }
+  @keyframes v-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+  @keyframes v-sweep { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 55% { transform: translateY(68px); opacity: 1; } 100% { transform: translateY(68px); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .c-slide.on .an { animation: none; } .vis .cv { display: none; } }
+
+  /* ---------- carousel slide layout + feature animations ---------- */
+  .carousel { padding: clamp(1.2rem, 2.5vw, 2rem); }
+  .c-slide { display: grid; gap: 1.6rem; align-items: center; transform: none; }
+  .c-slide:not(.on) { transform: translateX(28px); }
+  @media (min-width: 760px) { .c-slide { grid-template-columns: 0.9fr 1.1fr; } }
+  .c-vis { background: var(--surface-2); border: 1px solid var(--line-soft); padding: 0.8rem; }
+  .vis { width: 100%; height: auto; }
+  .vis .bx { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+  .vis .bx.mt { stroke: var(--mint); }
+  .vis .bx.er { stroke: var(--error); }
+  .vis .bx.wr { stroke: var(--warn); }
+  .vis .tx { font-size: 10px; fill: var(--ink); }
+  .vis .mono { font-family: "IBM Plex Mono", monospace; font-size: 9.5px; }
+  .vis .dim { fill: var(--ink-dim); }
+  .vis .mc { fill: var(--mint); } .vis .wc { fill: var(--warn); } .vis .ec { fill: var(--error); }
+  .vis .trk { fill: var(--line-soft); } .vis .bar { fill: var(--mint); } .vis .bar.wf { fill: var(--warn); }
+  .vis .ln { fill: none; stroke-width: 1.4; stroke-dasharray: 4 4; }
+  .vis .ln.i { stroke: var(--indigo); } .vis .ln.m { stroke: var(--mint); }
+  .vis .core { fill: var(--mint); fill-opacity: 0.15; stroke: var(--mint); }
+  .vis .spark { fill: var(--mint); }
+  .vis .cv { fill: var(--surface); }
+  .vis .scan { fill: var(--error); fill-opacity: 0.14; }
+  .vis .okb { fill: var(--mint); fill-opacity: 0.12; }
+  .vis .an { transform-box: fill-box; transform-origin: center; }
+  .c-slide.on .an { animation-duration: 0.6s; animation-delay: var(--d, 0s); animation-fill-mode: both; animation-timing-function: ease-out; }
+  .c-slide.on .pop { animation-name: v-pop; }
+  .c-slide.on .slide { animation-name: v-slide; }
+  .c-slide.on .grow { animation-name: v-grow; transform-origin: left; animation-duration: 0.9s; }
+  .c-slide.on .unc { animation-name: v-unc; transform-origin: right; animation-duration: var(--t, 0.8s); animation-timing-function: steps(14, end); }
+  .c-slide.on .flow { animation: v-pop 0.6s var(--d, 0s) both, v-dash 1s linear infinite; }
+  .c-slide.on .pulse { animation: v-pop 0.6s var(--d, 0s) both, v-pulse 1.6s ease-in-out calc(var(--d, 0s) + 0.6s) infinite; }
+  .c-slide.on .sweep { animation: v-sweep 2s ease-in-out 0.8s both; }
+  @keyframes v-pop { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: none; } }
+  @keyframes v-slide { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+  @keyframes v-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes v-unc { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+  @keyframes v-dash { to { stroke-dashoffset: -16; } }
+  @keyframes v-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+  @keyframes v-sweep { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 55% { transform: translateY(68px); opacity: 1; } 100% { transform: translateY(68px); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .c-slide.on .an { animation: none; } .vis .cv { display: none; } }
+
+  /* ---------- NayoDM-style UI mockups (Ant Design look; follows the page theme) ---------- */
+  .c-vis {
+    --u-bg: #383e47; --u-hd: #30404d; --u-bd: #5c7080; --u-tx: #f5f8fa; --u-mut: #abb3bf;
+    --u-pri: #1677ff; --u-ok: #6abe39; --u-err: #ff7875; --u-warn: #ffc53d; --u-code: #1e2a33; --u-kw: #c792ea; --u-st: #a5e075;
+    background: var(--surface-2); padding: clamp(0.6rem, 1.5vw, 1rem);
+  }
+  :root[data-theme="light"] .c-vis {
+    --u-bg: #ffffff; --u-hd: #fafafa; --u-bd: #d9d9d9; --u-tx: #1f1f1f; --u-mut: #8c8c8c;
+    --u-ok: #389e0d; --u-err: #cf1322; --u-warn: #d48806; --u-code: #f6f8fa; --u-kw: #8250df; --u-st: #1a7f37;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .c-vis {
+      --u-bg: #ffffff; --u-hd: #fafafa; --u-bd: #d9d9d9; --u-tx: #1f1f1f; --u-mut: #8c8c8c;
+      --u-ok: #389e0d; --u-err: #cf1322; --u-warn: #d48806; --u-code: #f6f8fa; --u-kw: #8250df; --u-st: #1a7f37;
+    }
+  }
+  .vis { font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.18)); }
+  .vis .wn { fill: var(--u-bg); stroke: var(--u-bd); }
+  .vis .hd { fill: var(--u-hd); }
+  .vis .rule { stroke: var(--u-bd); stroke-opacity: 0.55; stroke-width: 1; }
+  .vis .dotw { fill: var(--u-bd); }
+  .vis .dotc { fill: var(--u-bd); fill-opacity: 0.6; }
+  .vis .ut { font-size: 10.5px; fill: var(--u-tx); }
+  .vis .ut.m { fill: var(--u-mut); } .vis .ut.s { font-size: 9px; } .vis .ut.b { font-weight: 600; }
+  .vis .ut.mono, .vis .ut.code { font-family: "IBM Plex Mono", Consolas, monospace; font-size: 9.5px; }
+  .vis .ut.ec { fill: var(--u-err); }
+  .vis .cd { fill: var(--u-bg); stroke: var(--u-bd); stroke-width: 1; }
+  .vis .cd.hl { stroke: var(--u-pri); stroke-width: 1.5; }
+  .vis .cvs { fill: var(--u-hd); }
+  .vis .hn { fill: var(--u-bg); stroke: var(--u-pri); stroke-width: 1.2; }
+  .vis .eg { fill: none; stroke: var(--u-pri); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .vis .bd0 { fill: var(--u-bg); stroke: var(--u-bd); stroke-width: 1; }
+  .vis .bd0.fl { fill: var(--u-bg); }
+  .vis .bp { fill: var(--u-pri); } .vis .bt { fill: #fff; font-weight: 500; }
+  .vis .tg { stroke-width: 1; fill-opacity: 0.14; }
+  .vis .tg.ok { fill: var(--u-ok); stroke: var(--u-ok); } .vis .tgt.ok { fill: var(--u-ok); }
+  .vis .tg.err { fill: var(--u-err); stroke: var(--u-err); } .vis .tgt.err { fill: var(--u-err); }
+  .vis .tg.warn { fill: var(--u-warn); stroke: var(--u-warn); } .vis .tgt.warn { fill: var(--u-warn); }
+  .vis .tg.info { fill: var(--u-pri); stroke: var(--u-pri); } .vis .tgt.info { fill: var(--u-pri); }
+  .vis .tg.mut { fill: var(--u-mut); stroke: var(--u-mut); } .vis .tgt.mut { fill: var(--u-mut); }
+  .vis .tgt { font-size: 8.5px; font-weight: 500; }
+  .vis .rw.er { fill: var(--u-err); fill-opacity: 0.1; }
+  .vis .rw.hlr { fill: var(--u-pri); fill-opacity: 0.1; }
+  .vis .rw { fill: none; }
+  .vis .selo { fill: none; stroke: var(--u-pri); stroke-width: 1.5; }
+  .vis .ed { fill: var(--u-code); stroke: var(--u-bd); stroke-opacity: 0.6; }
+  .vis .kw { fill: var(--u-kw); } .vis .st { fill: var(--u-st); }
+  .vis .ov { fill: #000; fill-opacity: 0.28; }
+  .vis .cv { fill: var(--u-bg); } .vis .cv.ce { fill: var(--u-code); }
+  .vis .press.an { animation-name: v-pop; }
+  .c-slide.on .press { animation: v-pop 0.6s var(--d, 0s) both, v-press 0.5s ease-in-out calc(var(--d, 0s) + 0.9s) 1; }
+  @keyframes v-press { 50% { transform: scale(0.93); filter: brightness(0.85); } }
+
+
+  /* ---------- diagram motion (inline SVGs) ---------- */
+  .art .code text { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; }
+  .art svg * { transform-box: fill-box; }
+  .art .flow { stroke-dasharray: 4 4; animation: a-dash 1s linear infinite; }
+  .art .link { stroke-dasharray: 3 3; animation: a-dash 1.4s linear infinite; }
+  .art .pkt, .art .live, .art .drop, .art .lookup { animation: a-move 2.4s linear infinite both; }
+  .art .batch { animation: a-move 3.2s linear infinite both; }
+  .art .stage, .art .hub, .art .settle { animation: a-in 0.7s ease-out both; transform-origin: center; }
+  .art .pop, .art .count, .art .rise, .art .save { animation: a-pop 6s ease-out infinite both; transform-origin: center; }
+  .art .draw { stroke-dasharray: 400; animation: a-draw 6s ease-out infinite both; }
+  .art .fill-bar, .art .track, .art .type { transform-origin: 0 50%; animation: a-grow 6s ease-in-out infinite both; }
+  .art .type { animation-timing-function: steps(24); }
+  .art .pulse, .art .accept { animation: a-pulse 1.8s ease-in-out infinite; transform-origin: center; }
+  .art .blink { animation: a-blink 1s steps(1) infinite; }
+  .art .beat { animation: a-beat 1.6s ease-out infinite; transform-origin: center; }
+  .art .dot { animation: a-pulse 1.6s ease-in-out infinite; }
+  .art .visit { animation: a-visit 6s ease-in-out infinite both; }
+  .art .scan { animation: a-scan 3s ease-in-out infinite; }
+  .art .d1, .art .r2, .art .s2 { animation-delay: 0.4s; }
+  .art .d2, .art .r3, .art .s3 { animation-delay: 0.8s; }
+  .art .d3, .art .r4 { animation-delay: 1.2s; }
+  .art .d4, .art .r5 { animation-delay: 1.6s; }
+  .art .d5 { animation-delay: 2s; } .art .d6 { animation-delay: 2.4s; } .art .d7 { animation-delay: 2.8s; }
+  .art .k2 { animation-delay: 0.4s; } .art .k3 { animation-delay: 0.8s; } .art .k4 { animation-delay: 1.2s; } .art .k5 { animation-delay: 1.6s; }
+  .art .l2 { animation-delay: 0.8s; } .art .l3 { animation-delay: 1.6s; }
+  .art .live.d2 { animation-delay: 0.8s; } .art .live.d3 { animation-delay: 1.6s; }
+  .art .b2 { animation-delay: 0.8s; } .art .b3 { animation-delay: 1.6s; } .art .b4 { animation-delay: 2.4s; }
+  .art .v2 { animation-delay: 1.5s; } .art .v3 { animation-delay: 3s; } .art .v4 { animation-delay: 4.5s; }
+  @keyframes a-dash { to { stroke-dashoffset: -16; } }
+  @keyframes a-move { 0% { offset-distance: 0%; opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+  @keyframes a-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+  @keyframes a-pop { 0% { opacity: 0; transform: scale(0.85); } 8% { opacity: 1; transform: none; } 90% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes a-draw { 0% { stroke-dashoffset: 400; } 20%, 90% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+  @keyframes a-grow { 0% { transform: scaleX(0); } 70%, 94% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
+  @keyframes a-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+  @keyframes a-blink { 50% { opacity: 0; } }
+  @keyframes a-beat { from { transform: scale(1); opacity: 0.9; } to { transform: scale(3.2); opacity: 0; } }
+  @keyframes a-visit { 0%, 30%, 100% { fill-opacity: 0.1; } 8%, 20% { fill-opacity: 0.32; } }
+  @keyframes a-scan { 0% { transform: translateY(0); opacity: 0; } 12% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(54px); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .art svg * { animation: none !important; } }
+</style>
+</head>
+<body>
+
+
+<main>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="wrap hero-in">
+      <div>
+        <div class="lockup">
+          <img class="logo" src="assets/nayodm-logo.svg" alt="NayoDM Data Migration" width="207" height="64">
+        </div>
+        <h1>Load clean data into <em>IFS Cloud</em>. The first time.</h1>
+        <p class="lede">The right-sized migration tool for IFS Cloud: connect the source you already have, map it to IFS entities, and catch every bad row before it reaches the target &mdash; at full volume, from a desktop tool your delivery team runs directly. Seamless. Reliable. Scalable.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="mailto:info@nayotech.com?subject=NayoDM%20demo">Book a demo</a>
+          <a class="btn btn-ghost" href="#pre-flight">See how a migration runs</a>
+        </div>
+        <div class="hero-meta">
+          <div><b>4</b><span>Import sources</span></div>
+          <div><b>100%</b><span>Rows pre-validated</span></div>
+          <div><b>60+</b><span>IFS upgrades delivered</span></div>
+        </div>
+      </div>
+
+      <!-- HERO DIAGRAM: the migration pipeline -->
+      <figure class="art">
+        <figcaption class="art-head">
+          <span class="eyebrow">Migration pipeline</span>
+          <span class="mono">source &rarr; map &rarr; pre-flight &rarr; IFS Cloud</span>
+        </figcaption>
+        <svg viewBox="0 0 560 320" role="img" aria-label="Diagram: Excel, CSV, IFS Cloud and IFS IEE sources flow through field mapping and pre-flight validation into IFS Cloud">
+          <defs>
+            <linearGradient id="migrat-hgFlow" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#3F57E0"></stop><stop offset="1" stop-color="#007F67"></stop>
+            </linearGradient>
+            <filter id="migrat-hgGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="5" result="b"></feGaussianBlur>
+              <feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+            </filter>
+          </defs>
+          <g class="code" font-size="12" fill="#1E0B2E">
+            <rect x="6" y="26" width="108" height="32" rx="2" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="20" y="46">Excel .xlsx</text>
+            <rect x="6" y="86" width="108" height="32" rx="2" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="20" y="106">CSV</text>
+            <rect x="6" y="146" width="108" height="32" rx="2" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="20" y="166">IFS Cloud</text>
+            <rect x="6" y="206" width="108" height="32" rx="2" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="20" y="226">IFS IEE</text>
+          </g>
+          <g fill="none" stroke="#3F57E0" stroke-width="1.6" opacity="0.85">
+            <path class="flow" d="M114 42 C 152 42 154 96 186 118"></path>
+            <path class="flow d1" d="M114 102 C 152 102 156 110 186 124"></path>
+            <path class="flow d2" d="M114 162 C 152 162 156 148 186 136"></path>
+            <path class="flow d3" d="M114 222 C 152 222 154 168 186 142"></path>
+          </g>
+          <rect class="stage s2" x="186" y="88" width="104" height="86" rx="2" fill="#FFFFFF" stroke="#3F57E0"></rect>
+          <text x="238" y="80" text-anchor="middle" font-size="11" fill="#3A2C4E" letter-spacing="1.6">MAP</text>
+          <g fill="#3F57E0">
+            <circle cx="199" cy="110" r="2.5"></circle><circle cx="199" cy="131" r="2.5"></circle><circle cx="199" cy="152" r="2.5"></circle>
+          </g>
+          <g stroke="#3F57E0" stroke-width="1.2" fill="none">
+            <path class="draw" d="M204 110 H 272"></path>
+            <path class="draw d2" d="M204 131 H 272"></path>
+            <path class="draw d4" d="M204 152 H 272"></path>
+          </g>
+          <g fill="#007F67">
+            <circle cx="277" cy="110" r="2.5"></circle><circle cx="277" cy="131" r="2.5"></circle><circle cx="277" cy="152" r="2.5"></circle>
+          </g>
+          <g class="code" font-size="9">
+            <text x="186" y="196" fill="#3A2C4E">CUSTOMER_NO <tspan fill="#54446A">→</tspan> <tspan fill="#007F67">CustomerId</tspan></text>
+            <text x="186" y="210" fill="#3A2C4E">CREATED <tspan fill="#54446A">→</tspan> <tspan fill="#007F67">DateEntered</tspan></text>
+            <text x="186" y="224" fill="#54446A">+ 26 fields mapped</text>
+          </g>
+          <path class="flow" d="M290 131 H 334" fill="none" stroke="url(#migrat-hgFlow)" stroke-width="1.8"></path>
+          <rect class="stage s3" x="334" y="78" width="98" height="106" rx="2" fill="#FFFFFF" stroke="#007F67"></rect>
+          <text x="383" y="70" text-anchor="middle" font-size="11" fill="#3A2C4E" letter-spacing="1.6">PRE-FLIGHT</text>
+          <g class="code" font-size="9">
+            <rect x="344" y="88" width="78" height="14" fill="#F1EBF8"></rect><circle cx="352" cy="95" r="3" fill="#007F67"></circle><text x="361" y="98" fill="#3A2C4E">type</text>
+            <g class="pulse d1"><rect x="344" y="106" width="78" height="14" fill="#F1EBF8"></rect><circle cx="352" cy="113" r="3" fill="#007F67"></circle><text x="361" y="116" fill="#3A2C4E">length</text></g>
+            <g class="pulse d2"><rect x="344" y="124" width="78" height="14" fill="#F1EBF8"></rect><circle cx="352" cy="131" r="3" fill="#A85F00"></circle><text x="361" y="134" fill="#3A2C4E">warnings</text></g>
+            <g class="pulse d3"><rect x="344" y="142" width="78" height="14" fill="#F1EBF8"></rect><circle cx="352" cy="149" r="3" fill="#007F67"></circle><text x="361" y="152" fill="#3A2C4E">required</text></g>
+            <g class="pulse d4"><rect x="344" y="160" width="78" height="14" fill="#F1EBF8"></rect><circle cx="352" cy="167" r="3" fill="#007F67"></circle><text x="361" y="170" fill="#3A2C4E">date fmt</text></g>
+          </g>
+          <path class="flow" d="M432 131 H 468" fill="none" stroke="#007F67" stroke-width="1.8"></path>
+          <g fill="#007F67">
+            <circle class="pkt" r="3" style="offset-path:path('M114 42 C 152 42 154 96 186 118')"></circle>
+            <circle class="pkt d3" r="3" style="offset-path:path('M114 162 C 152 162 156 148 186 136')"></circle>
+            <circle class="pkt d5" r="3" style="offset-path:path('M290 131 H 334')"></circle>
+            <circle class="pkt d7" r="3.4" style="offset-path:path('M432 131 H 468')"></circle>
+          </g>
+          <g filter="url(#migrat-hgGlow)">
+            <ellipse cx="506" cy="96" rx="42" ry="12" fill="#007F67" fill-opacity="0.16" stroke="#007F67"></ellipse>
+            <path class="accept" d="M464 96 V 166 C 464 173 483 179 506 179 C 529 179 548 173 548 166 V 96" fill="#007F67" fill-opacity="0.07" stroke="#007F67"></path>
+            <ellipse cx="506" cy="166" rx="42" ry="12" fill="none" stroke="#007F67" stroke-opacity="0.5"></ellipse>
+          </g>
+          <text x="506" y="200" text-anchor="middle" font-size="12" fill="#1E0B2E">IFS Cloud</text>
+          <text x="506" y="215" text-anchor="middle" font-size="10" fill="#54446A" class="code">migration entities</text>
+          <g fill="#007F67">
+            <rect class="rise" x="500" y="240" width="12" height="3"></rect>
+            <rect class="rise d2" x="484" y="240" width="12" height="3"></rect>
+            <rect class="rise d4" x="516" y="240" width="12" height="3"></rect>
+          </g>
+          <g class="code" font-size="10" fill="#54446A">
+            <text x="6" y="292">batch 1 000</text>
+            <text x="110" y="292">commit 50 000</text>
+            <text x="230" y="292">0 errors</text>
+            <text x="310" y="292" fill="#A85F00">3 warnings</text>
+            <text x="420" y="292" fill="#007F67">streaming<tspan class="blink">_</tspan></text>
+          </g>
+          <rect x="6" y="300" width="548" height="3" fill="#F1EBF8"></rect>
+          <rect class="fill-bar" x="6" y="300" width="548" height="3" fill="#007F67" fill-opacity="0.85"></rect>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================= THE CHALLENGE ================= -->
+  <section class="band" id="challenge">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">The challenge</p>
+        <h2 class="h-sec">IFS data migration is where implementations lose time.</h2>
+        <p class="lede">IFS data migrations involve intricate setups, require specialist knowledge and present validation challenges at every entity. Without the right tooling and visibility, these projects absorb weeks that were budgeted for configuration and testing.</p>
+      </div>
+      <div class="challenge">
+        <div>
+          <h3>Intricate setups</h3>
+          <p>Each migration entity carries its own key structure, dependencies and mandatory attributes. Loading them in the wrong order, or without the reference data in place, fails deep in the run.</p>
+          <p class="cost">cost: repeated load attempts</p>
+        </div>
+        <div>
+          <h3>Specialist knowledge</h3>
+          <p>Getting data into IFS reliably means knowing the projections, the LU model and the rules IFS applies on import &mdash; knowledge that usually sits with one or two people on the project.</p>
+          <p class="cost">cost: a single point of dependency</p>
+        </div>
+        <div>
+          <h3>Validation blind spots</h3>
+          <p>Spreadsheets accept anything. Errors surface only once records reach IFS, in volumes that are slow to unpick and expensive to reload.</p>
+          <p class="cost">cost: rework late in the plan</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= REAL-WORLD SCENARIOS ================= -->
+  <section id="scenarios">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">In practice</p>
+        <h2 class="h-sec">The data a migration actually has to move.</h2>
+        <p class="lede">A migration is a sequence of loads, each with its own shape, volume and dependencies. These are the ones NayoDM is built around, and the work each carries beyond moving rows.</p>
+      </div>
+      <div class="table-scroll">
+        <table class="scenarios">
+          <thead>
+            <tr><th scope="col">Migration object</th><th scope="col">Typical source</th><th scope="col">Typical scale</th><th scope="col">What the load has to handle</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Customer master and addresses</th>
+              <td>Legacy ERP or CRM extract</td>
+              <td class="scale">10k &#8211; 80k rows</td>
+              <td>Address composition from separate columns, country and currency cross-reference, duplicate detection before load.</td>
+            </tr>
+            <tr>
+              <th scope="row">Supplier master and terms</th>
+              <td>Legacy ERP, database extract</td>
+              <td class="scale">5k &#8211; 20k rows</td>
+              <td>Payment and delivery term mapping, tax registration formats, bank and remittance detail validation.</td>
+            </tr>
+            <tr>
+              <th scope="row">Part catalogue and structures</th>
+              <td>PLM export or legacy ERP</td>
+              <td class="scale">50k &#8211; 500k rows</td>
+              <td>Part numbering cross-reference, unit-of-measure conversion, parent-before-child sequencing across structure levels.</td>
+            </tr>
+            <tr>
+              <th scope="row">Inventory balances and locations</th>
+              <td>Warehouse system extract</td>
+              <td class="scale">100k &#8211; 1M rows</td>
+              <td>Site and warehouse mapping, lot and serial handling, a cut-off that has to match the physical count.</td>
+            </tr>
+            <tr>
+              <th scope="row">Open purchase and customer orders</th>
+              <td>Legacy ERP, live database read</td>
+              <td class="scale">5k &#8211; 50k lines</td>
+              <td>Header and line dependencies, partially delivered quantities, price and discount rules carried across.</td>
+            </tr>
+            <tr>
+              <th scope="row">Drawings, specifications, certificates</th>
+              <td>File share with a manifest</td>
+              <td class="scale">1k &#8211; 100k files</td>
+              <td>Document class and format validation, revision handling, attachment to the part or order each file belongs to.</td>
+            </tr>
+            <tr>
+              <th scope="row">Integration access</th>
+              <td>Configuration sheet</td>
+              <td class="scale">10 &#8211; 100 clients</td>
+              <td>Client and service user creation per environment, enabled state applied consistently across the landscape.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PRE-FLIGHT ================= -->
+  <section class="band" id="pre-flight">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Pre-flight validation</p>
+        <h2 class="h-sec">Two checks before anything reaches IFS.</h2>
+        <p class="lede">IFS data migrations involve intricate setups, specialist knowledge and validation that is easy to get wrong. Without the right tooling and visibility, teams find the bad rows after the load &mdash; and the project pays for it in delays and cost.</p>
+        <p class="lede" style="margin-top:1.1rem">NayoDM runs two passes before a single record moves. The first checks every row against the target's own rules. The second is the one that catches most real migration failures: it collects the values your data refers to &mdash; country codes, delivery terms, units, customer groups &mdash; and confirms each one already exists in IFS.</p>
+        <ul class="feature-list">
+          <li><b>Pass 1 &mdash; row rules</b> &mdash; required values, formats, lengths and types, checked on every record, with warnings kept separate from errors.</li>
+          <li><b>Pass 2 &mdash; basic data</b> &mdash; every distinct referenced value is looked up in IFS, so a missing delivery term or customer group is found before the load, not during it.</li>
+          <li><b>A list you can act on</b> &mdash; the exact values still to be created in IFS, named and counted, rather than a wall of rejected rows.</li>
+          <li><b>Grouped by field</b> &mdash; results counted per field, so you fix a rule once instead of chasing individual records.</li>
+        </ul>
+      </div>
+
+      <figure class="art">
+        <figcaption class="art-head">
+          <span class="eyebrow">Pre-flight validation</span>
+          <span class="mono">two passes &middot; 148 320 rows</span>
+        </figcaption>
+        <svg viewBox="0 0 460 418" role="img" aria-label="Diagram: pre-flight runs two passes - row rules check every record for required, format and length, then basic data validation checks each distinct referenced value against IFS, reporting values that do not exist yet">
+  <text x="14" y="14" class="code" font-size="9.5" fill="#54446A">PRE-FLIGHT</text>
+  <text x="446" y="14" class="code" font-size="9.5" fill="#007F67" text-anchor="end">148 320 rows · two passes</text>
+  <line x1="14" y1="22" x2="446" y2="22" stroke="#CDBFE0"></line>
+  <rect class="stage" x="14" y="32" width="432" height="118" fill="none" stroke="#3F57E0" stroke-opacity="0.35"></rect>
+  <text x="24" y="48" class="code" font-size="9.5" fill="#1E0B2E">PASS 1 · ROW RULES</text>
+  <text x="436" y="48" class="code" font-size="9" fill="#54446A" text-anchor="end">every record, every mapped field</text>
+  <g class="code" font-size="9" fill="#54446A">
+    <text x="24" y="66">ROW</text><text x="86" y="66">FIELD</text><text x="212" y="66">RULE</text><text x="330" y="66">RESULT</text>
+  </g>
+  <g class="code" font-size="10">
+    <rect x="24" y="72" width="412" height="17" fill="#FFFFFF"></rect>
+    <text x="30" y="84" fill="#54446A">00412</text><text x="86" y="84" fill="#3A2C4E">CUSTOMER_NO</text>
+    <text x="212" y="84" fill="#54446A">required</text><text class="pop" x="330" y="84" fill="#007F67">pass</text>
+    <rect x="24" y="91" width="412" height="17" fill="#FFFFFF"></rect>
+    <text x="30" y="103" fill="#54446A">00413</text><text x="86" y="103" fill="#3A2C4E">DATE_ENTERED</text>
+    <text x="212" y="103" fill="#54446A">date format</text><text class="pop d1" x="330" y="103" fill="#007F67">pass</text>
+    <rect x="24" y="110" width="412" height="17" fill="#F1EBF8"></rect>
+    <text x="30" y="122" fill="#54446A">00414</text><text x="86" y="122" fill="#A85F00">PARTY_TYPE</text>
+    <text x="212" y="122" fill="#54446A">derived on import</text><text class="pop d2" x="330" y="122" fill="#A85F00">warning</text>
+    <rect x="24" y="129" width="412" height="17" fill="#FFFFFF"></rect>
+    <text x="30" y="141" fill="#54446A">00415</text><text x="86" y="141" fill="#3A2C4E">ADDRESS1</text>
+    <text x="212" y="141" fill="#54446A">max length 100</text><text class="pop d3" x="330" y="141" fill="#007F67">pass</text>
+  </g>
+  <g class="scan">
+    <rect x="24" y="72" width="412" height="18" fill="#007F67" fill-opacity="0.06"></rect>
+    <rect x="24" y="89" width="412" height="1.2" fill="#007F67" fill-opacity="0.5"></rect>
+  </g>
+  <rect class="stage s2" x="14" y="164" width="432" height="122" fill="none" stroke="#007F67" stroke-opacity="0.35"></rect>
+  <text x="24" y="180" class="code" font-size="9.5" fill="#1E0B2E">PASS 2 · BASIC DATA</text>
+  <text x="436" y="180" class="code" font-size="9" fill="#54446A" text-anchor="end">does the value exist in IFS yet?</text>
+  <g class="code" font-size="9" fill="#54446A">
+    <text x="24" y="198">FIELD</text><text x="128" y="198">DISTINCT</text><text x="186" y="198">RESULT</text>
+  </g>
+  <g class="code" font-size="10">
+    <text x="24" y="216" fill="#3A2C4E">COUNTRY_CODE</text>
+    <text x="128" y="216" fill="#54446A">42</text>
+    <text class="pop d1" x="186" y="216" fill="#007F67">all found</text>
+    <text x="24" y="234" fill="#3A2C4E">DELIVERY_TERM</text>
+    <text x="128" y="234" fill="#54446A">18</text>
+    <text class="pop d3" x="186" y="234" fill="#A85F00">2 missing</text>
+    <text x="24" y="252" fill="#3A2C4E">UNIT_OF_MEASURE</text>
+    <text x="128" y="252" fill="#54446A">9</text>
+    <text class="pop d4" x="186" y="252" fill="#007F67">all found</text>
+    <text x="24" y="270" fill="#3A2C4E">CUSTOMER_GROUP</text>
+    <text x="128" y="270" fill="#54446A">6</text>
+    <text class="pop d5" x="186" y="270" fill="#A85F00">1 missing</text>
+  </g>
+  <rect x="300" y="204" width="140" height="72" rx="2" fill="#FFFFFF" stroke="#007F67" stroke-opacity="0.55"></rect>
+  <text x="370" y="222" text-anchor="middle" font-size="10.5" fill="#1E0B2E">IFS basic data</text>
+  <g class="code" font-size="9" fill="#54446A">
+    <text x="312" y="240">country codes</text>
+    <text x="312" y="254">delivery terms</text>
+    <text x="312" y="268">units, groups, terms</text>
+  </g>
+  <g fill="none" stroke="#007F67" stroke-width="1.2" stroke-opacity="0.5">
+    <path class="link" d="M258 212 C 282 212 284 222 300 226"></path>
+    <path class="link" d="M258 266 C 282 266 284 254 300 250"></path>
+  </g>
+  <g fill="#007F67">
+    <circle class="lookup d1" r="2.4" style="offset-path:path('M258 212 C 282 212 284 222 300 226')"></circle>
+    <circle class="lookup d4" r="2.4" style="offset-path:path('M258 266 C 282 266 284 254 300 250')"></circle>
+  </g>
+  <line x1="14" y1="300" x2="446" y2="300" stroke="#CDBFE0"></line>
+  <text x="14" y="318" class="code" font-size="9.5" fill="#54446A">OUTCOME</text>
+  <g class="count">
+    <rect x="14" y="326" width="136" height="38" fill="#FFFFFF" stroke="#007F67" stroke-opacity="0.5"></rect>
+    <text x="24" y="341" class="code" font-size="9" fill="#54446A">ROWS READY</text>
+    <text x="24" y="356" font-size="15" font-weight="600" fill="#007F67">148 317</text>
+  </g>
+  <g class="count d2">
+    <rect x="162" y="326" width="136" height="38" fill="#FFFFFF" stroke="#A85F00" stroke-opacity="0.5"></rect>
+    <text x="172" y="341" class="code" font-size="9" fill="#54446A">BASIC DATA TO ADD</text>
+    <text x="172" y="356" font-size="15" font-weight="600" fill="#A85F00">3</text>
+  </g>
+  <g class="count d4">
+    <rect x="310" y="326" width="136" height="38" fill="#FFFFFF" stroke="#C8341B" stroke-opacity="0.5"></rect>
+    <text x="320" y="341" class="code" font-size="9" fill="#54446A">ROWS TO FIX</text>
+    <text x="320" y="356" font-size="15" font-weight="600" fill="#C8341B">3</text>
+  </g>
+  <rect x="14" y="376" width="432" height="3" fill="#F1EBF8"></rect>
+  <rect class="fill-bar" x="14" y="376" width="432" height="3" fill="#007F67" fill-opacity="0.85"></rect>
+  <g class="code" font-size="9">
+    <text x="14" y="396" fill="#54446A">to create in IFS first:</text>
+    <text x="142" y="396" fill="#A85F00">DDU-WHSE, LEGACY-04, RETAIL-EU</text>
+    <text x="14" y="412" fill="#54446A">nothing is written until both passes are clear</text>
+  </g>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================= SOURCES ================= -->
+  <section id="sources">
+    <div class="wrap split flip">
+      <figure class="art">
+        <figcaption class="art-head">
+          <span class="eyebrow">Connectivity</span>
+          <span class="mono">two files, two live connections</span>
+        </figcaption>
+        <svg viewBox="0 0 460 316" role="img" aria-label="Diagram: Excel and CSV files are handed to NayoDM in one delivery, while IFS Cloud and IFS IEE stay connected and are read live; the records arrive ready to map with their columns detected">
+  <text x="14" y="16" class="code" font-size="9.5" fill="#54446A">FILE · HANDED OVER ONCE</text>
+  <text x="446" y="16" class="code" font-size="9.5" fill="#007F67" text-anchor="end">DIRECT CONNECTION · READ LIVE</text>
+  <g class="code" font-size="10.5">
+    <rect x="14" y="30" width="120" height="36" rx="2" fill="#F1EBF8" stroke="#CDBFE0"></rect>
+    <text x="26" y="47" fill="#1E0B2E">Excel</text>
+    <text x="26" y="59" font-size="9" fill="#54446A">from the business</text>
+    <rect x="14" y="86" width="120" height="36" rx="2" fill="#F1EBF8" stroke="#CDBFE0"></rect>
+    <text x="26" y="103" fill="#1E0B2E">CSV</text>
+    <text x="26" y="115" font-size="9" fill="#54446A">exported file</text>
+  </g>
+  <g class="code" font-size="10.5">
+    <rect x="326" y="30" width="120" height="36" rx="2" fill="#FFFFFF" stroke="#007F67" stroke-opacity="0.65"></rect>
+    <text x="352" y="47" fill="#1E0B2E">IFS Cloud</text>
+    <text x="352" y="59" font-size="9" fill="#007F67">connected</text>
+    <circle class="beat" cx="340" cy="46" r="3" fill="none" stroke="#007F67"></circle>
+    <circle class="dot" cx="340" cy="46" r="3" fill="#007F67"></circle>
+    <rect x="326" y="86" width="120" height="36" rx="2" fill="#FFFFFF" stroke="#007F67" stroke-opacity="0.65"></rect>
+    <text x="352" y="103" fill="#1E0B2E">IFS IEE</text>
+    <text x="352" y="115" font-size="9" fill="#007F67">connected</text>
+    <circle class="beat l2" cx="340" cy="102" r="3" fill="none" stroke="#007F67"></circle>
+    <circle class="dot l2" cx="340" cy="102" r="3" fill="#007F67"></circle>
+  </g>
+  <g fill="none" stroke-width="1.4">
+    <path d="M134 48 C 158 48 160 66 176 72" stroke="#CDBFE0"></path>
+    <path d="M134 104 C 158 104 160 92 176 86" stroke="#CDBFE0"></path>
+    <path class="link" d="M326 48 C 302 48 300 66 284 72" stroke="#007F67" stroke-opacity="0.8"></path>
+    <path class="link l2" d="M326 104 C 302 104 300 92 284 86" stroke="#007F67" stroke-opacity="0.8"></path>
+  </g>
+  <circle class="drop" r="3" fill="#3A2C4E" style="offset-path:path('M134 48 C 158 48 160 66 176 72')"></circle>
+  <circle class="drop d1" r="3" fill="#3A2C4E" style="offset-path:path('M134 104 C 158 104 160 92 176 86')"></circle>
+  <g fill="#007F67">
+    <circle class="live" r="2.6" style="offset-path:path('M326 48 C 302 48 300 66 284 72')"></circle>
+    <circle class="live l2" r="2.6" style="offset-path:path('M326 48 C 302 48 300 66 284 72')"></circle>
+    <circle class="live l3" r="2.6" style="offset-path:path('M326 48 C 302 48 300 66 284 72')"></circle>
+    <circle class="live d1" r="2.6" style="offset-path:path('M326 104 C 302 104 300 92 284 86')"></circle>
+    <circle class="live d2" r="2.6" style="offset-path:path('M326 104 C 302 104 300 92 284 86')"></circle>
+    <circle class="live d3" r="2.6" style="offset-path:path('M326 104 C 302 104 300 92 284 86')"></circle>
+  </g>
+  <rect class="hub" x="176" y="52" width="108" height="52" rx="2" fill="#FFFFFF" stroke="#007F67"></rect>
+  <text x="230" y="74" text-anchor="middle" font-size="12" fill="#1E0B2E" font-weight="600">NayoDM</text>
+  <text x="230" y="90" text-anchor="middle" class="code" font-size="9" fill="#007F67">reading<tspan class="blink">_</tspan></text>
+  <path class="link" d="M230 104 V 128" fill="none" stroke="#007F67" stroke-width="1.4"></path>
+  <circle class="live d2" r="2.6" fill="#007F67" style="offset-path:path('M230 104 V 128')"></circle>
+  <rect x="110" y="128" width="240" height="30" rx="2" fill="#F1EBF8" stroke="#CDBFE0"></rect>
+  <text x="230" y="147" text-anchor="middle" class="code" font-size="10" fill="#1E0B2E">
+    <tspan class="count" fill="#007F67">48 231</tspan> records ready to map
+  </text>
+  <text x="14" y="182" class="code" font-size="9.5" fill="#54446A">COLUMNS FOUND</text>
+  <g class="code" font-size="9">
+    <g class="settle">
+      <rect x="14" y="190" width="94" height="18" fill="#FFFFFF" stroke="#CDBFE0"></rect>
+      <text x="24" y="203" fill="#3A2C4E">CUSTOMER_NO</text>
+    </g>
+    <g class="settle d1">
+      <rect x="116" y="190" width="94" height="18" fill="#FFFFFF" stroke="#CDBFE0"></rect>
+      <text x="126" y="203" fill="#3A2C4E">NAME</text>
+    </g>
+    <g class="settle d2">
+      <rect x="218" y="190" width="94" height="18" fill="#FFFFFF" stroke="#CDBFE0"></rect>
+      <text x="228" y="203" fill="#3A2C4E">CREATED_DT</text>
+    </g>
+    <g class="settle d3">
+      <rect x="320" y="190" width="126" height="18" fill="#FFFFFF" stroke="#CDBFE0"></rect>
+      <text x="330" y="203" fill="#54446A">+ 26 more columns</text>
+    </g>
+  </g>
+  <line x1="14" y1="230" x2="446" y2="230" stroke="#CDBFE0"></line>
+  <g class="code" font-size="9.5">
+    <text x="14" y="250" fill="#3A2C4E">Files</text>
+    <text x="70" y="250" fill="#54446A">picked up as they are · sheet and first row chosen by you</text>
+    <text x="14" y="270" fill="#007F67">Direct</text>
+    <text x="70" y="270" fill="#54446A">read from the environment itself · no export, no staging file</text>
+  </g>
+  <rect x="14" y="288" width="432" height="3" fill="#F1EBF8"></rect>
+  <rect class="fill-bar" x="14" y="288" width="432" height="3" fill="#007F67" fill-opacity="0.85"></rect>
+  <text x="14" y="308" class="code" font-size="9" fill="#54446A">the steps after this point are the same for every source</text>
+</svg>
+      </figure>
+
+      <div>
+        <p class="eyebrow">Import sources</p>
+        <h2 class="h-sec">Four ways in. Two of them connect straight to IFS.</h2>
+        <p class="lede">Where your data lives today decides how a migration starts. NayoDM takes a file when that is all you have, and connects directly to an IFS environment when you have one &mdash; so nobody has to export, tidy and hand around spreadsheets to move data between systems.</p>
+
+        <div class="sources">
+          <div class="src src--direct">
+            <span class="kind">Direct connection</span>
+            <h3>IFS Cloud</h3>
+            <p>Connect to an IFS Cloud environment and pick the data you need from it. Useful for moving between environments, topping up a test system, or bringing data across from another IFS Cloud tenant.</p>
+          </div>
+          <div class="src src--direct">
+            <span class="kind">Direct connection</span>
+            <h3>IFS IEE</h3>
+            <p>Read straight from the IFS Applications system you are leaving. The data comes from the source itself, so what you migrate is what is live on the day &mdash; not last month's export.</p>
+          </div>
+          <div class="src">
+            <span class="kind">File</span>
+            <h3>Excel</h3>
+            <p>Take a workbook as the business filled it in. Choose the sheet and the row the data starts on, and the column names are picked up for you.</p>
+          </div>
+          <div class="src">
+            <span class="kind">File</span>
+            <h3>CSV</h3>
+            <p>An export from any other system &mdash; a warehouse tool, a spreadsheet, an old database report &mdash; loaded the same way as everything else.</p>
+          </div>
+        </div>
+
+        <ul class="feature-list">
+          <li><b>The same steps every time</b> &mdash; whichever source you choose, the mapping, checking and loading that follow are identical, so the team learns it once.</li>
+          <li><b>You see the size before you start</b> &mdash; the real number of records is shown up front, not discovered halfway through a load.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MAPPING ================= -->
+  <section class="band" id="mapping">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Mapping &amp; transformation</p>
+        <h2 class="h-sec">One target attribute, several source columns, real rules.</h2>
+        <p class="lede">Real migrations are rarely one-to-one. A single IFS attribute is often assembled from several legacy columns, resolved through a cross-reference table, reformatted, defaulted where the source is empty, or left for IFS to derive at import time. NayoDM holds all of that in the mapping itself, so the rule travels with the project and can be reviewed, corrected and repeated in the next environment.</p>
+        <ul class="feature-list">
+          <li><b>Cross-reference lookups</b> &mdash; resolve legacy codes against a reference sheet held with the project; unmatched values are reported by pre-flight rather than loaded blind.</li>
+          <li><b>Composite and conditional values</b> &mdash; concatenate, pad, default and branch on the source row, evaluated per record.</li>
+          <li><b>Format normalisation</b> &mdash; legacy date and numeric formats converted to the target's expected form, with failures surfaced by field.</li>
+          <li><b>IFS-resolved attributes</b> &mdash; values IFS derives on import are marked in the mapping and reported as warnings rather than failing the run.</li>
+        </ul>
+      </div>
+
+      <figure class="art">
+        <figcaption class="art-head">
+          <span class="eyebrow">Complex mapping</span>
+          <span class="mono">customer master &rarr; IFS customer</span>
+        </figcaption>
+        <svg viewBox="0 0 460 388" role="img" aria-label="Diagram: five legacy source columns routed through lookup, concatenate, date format, default and IFS-resolved rules into five IFS attributes, with the resulting expression and a worked row preview">
+          <defs>
+            <clipPath id="fieldm-typeClip"><rect class="type" x="86" y="316" width="360" height="14"></rect></clipPath>
+            <clipPath id="fieldm-typeClip2"><rect class="type d2" x="86" y="334" width="360" height="14"></rect></clipPath>
+          </defs>
+          <text x="14" y="16" font-size="10" fill="#54446A" class="code">LEGACY COLUMN</text>
+          <text x="230" y="16" font-size="10" fill="#54446A" class="code" text-anchor="middle">RULE</text>
+          <text x="446" y="16" font-size="10" fill="#54446A" text-anchor="end" class="code">IFS ATTRIBUTE</text>
+          <g class="code" font-size="10" fill="#1E0B2E">
+            <rect x="14" y="26" width="112" height="24" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="24" y="41">PART_NO</text>
+            <rect x="14" y="56" width="112" height="24" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="24" y="71">STREET</text>
+            <rect x="14" y="86" width="112" height="24" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="24" y="101">CITY</text>
+            <rect x="14" y="116" width="112" height="24" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="24" y="131">CREATED_DT</text>
+            <rect x="14" y="146" width="112" height="24" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="24" y="161">CRD_LIMIT</text>
+          </g>
+          <g fill="none" stroke="#3F57E0" stroke-width="1.3" opacity="0.85">
+            <path class="draw" d="M126 38 H 172"></path>
+            <path class="draw d1" d="M126 68 C 148 68 150 80 172 80"></path>
+            <path class="draw d1" d="M126 98 C 148 98 150 86 172 86"></path>
+            <path class="draw d3" d="M126 128 H 172"></path>
+            <path class="draw d4" d="M126 158 H 172"></path>
+          </g>
+          <g class="code" font-size="9">
+            <rect x="172" y="26" width="112" height="24" fill="#FFFFFF" stroke="#3F57E0" stroke-opacity="0.7"></rect><text x="181" y="41" fill="#3F57E0">cross-reference</text>
+            <rect x="172" y="68" width="112" height="24" fill="#FFFFFF" stroke="#3F57E0" stroke-opacity="0.7"></rect><text x="181" y="83" fill="#3F57E0">combine + trim</text>
+            <rect x="172" y="116" width="112" height="24" fill="#FFFFFF" stroke="#3F57E0" stroke-opacity="0.7"></rect><text x="181" y="131" fill="#3F57E0">date format</text>
+            <rect x="172" y="146" width="112" height="24" fill="#FFFFFF" stroke="#3F57E0" stroke-opacity="0.7"></rect><text x="181" y="161" fill="#3F57E0">default value</text>
+            <rect x="172" y="182" width="112" height="24" fill="#FFFFFF" stroke="#A85F00" stroke-opacity="0.7"></rect><text x="181" y="197" fill="#A85F00">resolved by IFS</text>
+          </g>
+          <g fill="none" stroke="#007F67" stroke-width="1.3" opacity="0.9">
+            <path class="draw d2" d="M284 38 H 330"></path>
+            <path class="draw d3" d="M284 80 H 330"></path>
+            <path class="draw d5" d="M284 128 H 330"></path>
+            <path class="draw d5" d="M284 158 H 330"></path>
+            <path class="draw d6" d="M284 194 H 330"></path>
+          </g>
+          <g fill="#007F67">
+            <circle class="pkt" r="2.6" style="offset-path:path('M126 38 H 172')"></circle>
+            <circle class="pkt d2" r="2.6" style="offset-path:path('M126 68 C 148 68 150 80 172 80')"></circle>
+            <circle class="pkt d4" r="2.6" style="offset-path:path('M126 128 H 172')"></circle>
+            <circle class="pkt d3" r="2.6" style="offset-path:path('M284 38 H 330')"></circle>
+            <circle class="pkt d5" r="2.6" style="offset-path:path('M284 80 H 330')"></circle>
+          </g>
+          <g class="code" font-size="10" fill="#1E0B2E">
+            <rect x="330" y="26" width="116" height="24" fill="#FFFFFF" stroke="#007F67" stroke-opacity="0.55"></rect><text x="340" y="41">CatalogNo</text>
+            <rect x="330" y="68" width="116" height="24" fill="#FFFFFF" stroke="#007F67" stroke-opacity="0.55"></rect><text x="340" y="83">Address1</text>
+            <rect x="330" y="116" width="116" height="24" fill="#FFFFFF" stroke="#007F67" stroke-opacity="0.55"></rect><text x="340" y="131">DateEntered</text>
+            <rect x="330" y="146" width="116" height="24" fill="#FFFFFF" stroke="#007F67" stroke-opacity="0.55"></rect><text x="340" y="161">CreditLimit</text>
+            <rect x="330" y="182" width="116" height="24" fill="#FFFFFF" stroke="#A85F00" stroke-opacity="0.55"></rect><text x="340" y="197">PartyType</text>
+          </g>
+          <text x="446" y="218" font-size="9" fill="#A85F00" class="code" text-anchor="end">warning — derived on import</text>
+          <line x1="14" y1="238" x2="446" y2="238" stroke="#CDBFE0"></line>
+          <text x="14" y="256" font-size="10" fill="#54446A" class="code">EXPRESSION — Address1</text>
+          <rect x="14" y="264" width="432" height="40" fill="#F8F5FC" stroke="#CDBFE0"></rect>
+          <text x="26" y="282" font-size="10" class="code" fill="#3F7A0A">trim(STREET) + &#34;, &#34; + CITY</text>
+          <text x="26" y="296" font-size="10" class="code" fill="#3F7A0A">  truncated to 100 characters</text>
+          <text x="14" y="326" font-size="9.5" fill="#54446A" class="code">ROW 00412</text>
+          <g clip-path="url(#fieldm-typeClip)">
+            <text x="86" y="326" font-size="9.5" class="code" fill="#3A2C4E">STREET = &#34;12 Mill Rd &#34; , CITY = &#34;Leeds&#34;</text>
+          </g>
+          <g clip-path="url(#fieldm-typeClip2)">
+            <text x="86" y="344" font-size="9.5" class="code" fill="#007F67">Address1 = &#34;12 Mill Rd, Leeds&#34;</text>
+          </g>
+          <g class="pop d5">
+            <rect x="330" y="333" width="62" height="14" fill="#FFFFFF" stroke="#007F67" stroke-opacity="0.6"></rect>
+            <text x="337" y="343" font-size="9" class="code" fill="#007F67">validated</text>
+          </g>
+          <text x="14" y="370" font-size="9" fill="#54446A" class="code">28 attributes mapped</text>
+          <text x="150" y="370" font-size="9" fill="#54446A" class="code">5 rules applied</text>
+          <text x="234" y="370" font-size="9" fill="#A85F00" class="code">1 derived by IFS</text>
+          <text x="350" y="370" font-size="9" fill="#007F67" class="code">0 unmapped</text>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================= DOCUMENT MIGRATION ================= -->
+  <section id="documents">
+    <div class="wrap split flip">
+      <figure class="art">
+        <figcaption class="art-head">
+          <span class="eyebrow">Document migration</span>
+          <span class="mono">manifest &rarr; document &rarr; attachment</span>
+        </figcaption>
+        <svg viewBox="0 0 460 300" role="img" aria-label="Diagram: a document folder with a structure manifest, validated against its document class, created in IFS, uploaded and attached to a business object, with a per-row run log">
+          <text x="14" y="16" font-size="10" fill="#54446A" class="code">SOURCE FOLDER</text>
+          <rect x="14" y="24" width="128" height="122" fill="#FFFFFF" stroke="#CDBFE0"></rect>
+          <g class="code" font-size="9.5" fill="#3A2C4E">
+            <text x="26" y="44" fill="#007F67">manifest.csv</text>
+            <text x="26" y="64">DRW-10041.pdf</text>
+            <text x="26" y="80">DRW-10042.pdf</text>
+            <text x="26" y="96">SPEC-2210.docx</text>
+            <text x="26" y="112">CERT-88.png</text>
+            <text x="26" y="132" fill="#54446A">+ 1 842 files</text>
+          </g>
+          <g fill="none" stroke="#3F57E0" stroke-width="1.4">
+            <path class="flow" d="M142 84 H 194"></path>
+            <path class="flow d2" d="M282 84 H 330"></path>
+          </g>
+          <circle class="pkt" r="2.6" fill="#007F67" style="offset-path:path('M142 84 H 194')"></circle>
+          <circle class="pkt d3" r="2.6" fill="#007F67" style="offset-path:path('M282 84 H 330')"></circle>
+          <rect class="stage" x="194" y="44" width="88" height="82" fill="#FFFFFF" stroke="#3F57E0"></rect>
+          <text x="238" y="38" text-anchor="middle" font-size="10" fill="#3A2C4E" letter-spacing="1.2">VALIDATE</text>
+          <g class="code" font-size="9" fill="#3A2C4E">
+            <text x="204" y="64">class + format</text>
+            <text x="204" y="80">revision</text>
+            <text x="204" y="96">file present</text>
+            <text x="204" y="114" fill="#007F67">document id</text>
+          </g>
+          <rect class="stage s2" x="330" y="44" width="116" height="82" fill="#FFFFFF" stroke="#007F67"></rect>
+          <text x="388" y="38" text-anchor="middle" font-size="10" fill="#3A2C4E" letter-spacing="1.2">IFS CLOUD</text>
+          <g class="code" font-size="9" fill="#3A2C4E">
+            <text x="340" y="64">document created</text>
+            <text x="340" y="80">file uploaded</text>
+            <text x="340" y="96" fill="#007F67">attached to</text>
+            <text x="340" y="112" fill="#007F67">Part catalogue</text>
+          </g>
+          <text x="14" y="168" font-size="10" fill="#54446A" class="code">MANIFEST ROW</text>
+          <rect x="14" y="176" width="432" height="26" fill="#F1EBF8" stroke="#CDBFE0"></rect>
+          <g class="code" font-size="9" fill="#3A2C4E">
+            <text x="24" y="192">class = DRAWING</text>
+            <text x="136" y="192">number = DRW-10041</text>
+            <text x="248" y="192">revision = A1</text>
+            <text x="320" y="192">attach to = Part</text>
+          </g>
+          <text x="14" y="226" font-size="10" fill="#54446A" class="code">RUN LOG</text>
+          <g class="code" font-size="9">
+            <g class="pop"><rect x="14" y="234" width="432" height="16" fill="#FFFFFF"></rect><text x="24" y="245" fill="#3A2C4E">1841 <tspan fill="#007F67">[INFO]</tspan> DRW-10041 migrated · Part GB-1120</text></g>
+            <g class="pop d3"><rect x="14" y="252" width="432" height="16" fill="#FFFFFF"></rect><text x="24" y="263" fill="#3A2C4E">1842 <tspan fill="#007F67">[INFO]</tspan> SPEC-2210 migrated · file reference created</text></g>
+            <g class="pop d5"><rect x="14" y="270" width="432" height="16" fill="#F1EBF8"></rect><text x="24" y="281" fill="#3A2C4E">1843 <tspan fill="#A85F00">[WARN]</tspan> CERT-88 · class not enabled for this format</text></g>
+          </g>
+</svg>
+      </figure>
+
+      <div>
+        <p class="eyebrow">Documents</p>
+        <h2 class="h-sec">Drawings, specifications and certificates, attached to the right object.</h2>
+        <p class="lede">Point NayoDM at a document folder and its manifest, and the files are migrated as IFS documents &mdash; the class and format validated first, the document created, the file uploaded, and the result attached to the business object the manifest names.</p>
+        <ul class="feature-list">
+          <li><b>Manifest-driven</b> &mdash; class, number, sheet, revision, type, title and file name are declared per document and validated before anything is uploaded.</li>
+          <li><b>Attached on creation</b> &mdash; each document is linked to its logical unit and key reference, so it lands against the part, order or object it belongs to.</li>
+          <li><b>Numbering handled</b> &mdash; take the number from the manifest, or let IFS allocate it from the document class counter.</li>
+          <li><b>Per-row run log</b> &mdash; every file records an outcome against its document number, exportable for handover and audit.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= IAM CLIENTS ================= -->
+  <section class="band" id="iam">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">IAM client migration</p>
+        <h2 class="h-sec">Move integration access with the data.</h2>
+        <p class="lede">Interfaces need their access clients in place before the first message flows. NayoDM creates them from a single configuration sheet &mdash; identifier, description, service user and enabled state &mdash; and records the outcome of every row, so access configuration is reproducible across every environment in the landscape.</p>
+        <ul class="feature-list">
+          <li><b>Bulk creation</b> &mdash; one configuration sheet per environment, applied in a single run.</li>
+          <li><b>Service users handled</b> &mdash; optionally ensure the service user exists and is linked as the client's identity.</li>
+          <li><b>Enabled state respected</b> &mdash; clients are created active or disabled exactly as declared.</li>
+          <li><b>Result log per row</b> &mdash; created, skipped and failed outcomes exported for the security team's records.</li>
+        </ul>
+      </div>
+
+      <figure class="art">
+        <figcaption class="art-head">
+          <span class="eyebrow">IAM clients</span>
+          <span class="mono">configuration sheet &rarr; IFS IAM</span>
+        </figcaption>
+        <svg viewBox="0 0 460 286" role="img" aria-label="Diagram: rows of a client CSV creating IAM clients with linked service users, and a result log recording created, skipped and disabled outcomes">
+          <text x="14" y="16" font-size="10" fill="#54446A" class="code">configuration sheet</text>
+          <g class="code" font-size="9.5">
+            <rect x="14" y="24" width="176" height="22" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="24" y="39" fill="#1E0B2E">WMS_INBOUND</text>
+            <rect x="14" y="52" width="176" height="22" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="24" y="67" fill="#1E0B2E">EDI_ORDERS</text>
+            <rect x="14" y="80" width="176" height="22" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="24" y="95" fill="#1E0B2E">TMS_TRACKING</text>
+            <rect x="14" y="108" width="176" height="22" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="24" y="123" fill="#1E0B2E">SFDC_SYNC</text>
+            <rect x="14" y="136" width="176" height="22" fill="#F1EBF8" stroke="#CDBFE0"></rect><text x="24" y="151" fill="#1E0B2E">BI_EXTRACT</text>
+          </g>
+          <g class="code" font-size="9" fill="#54446A">
+            <text x="130" y="39">enabled</text>
+            <text x="130" y="67">enabled</text>
+            <text x="130" y="95">enabled</text>
+            <text x="130" y="123">disabled</text>
+            <text x="130" y="151">enabled</text>
+          </g>
+          <g fill="none" stroke="#3F57E0" stroke-width="1.3">
+            <path class="flow" d="M190 35 C 220 35 226 78 250 86"></path>
+            <path class="flow d1" d="M190 63 C 220 63 228 80 250 88"></path>
+            <path class="flow d2" d="M190 91 H 250"></path>
+            <path class="flow d3" d="M190 119 C 220 119 228 98 250 92"></path>
+            <path class="flow d4" d="M190 147 C 220 147 226 100 250 94"></path>
+          </g>
+          <circle class="pkt" r="2.4" fill="#007F67" style="offset-path:path('M190 35 C 220 35 226 78 250 86')"></circle>
+          <circle class="pkt d3" r="2.4" fill="#007F67" style="offset-path:path('M190 91 H 250')"></circle>
+          <rect class="stage" x="250" y="58" width="126" height="64" fill="#FFFFFF" stroke="#007F67"></rect>
+          <text x="313" y="52" text-anchor="middle" font-size="10" fill="#3A2C4E" letter-spacing="1.2">IFS IAM</text>
+          <g class="code" font-size="9" fill="#3A2C4E">
+            <text x="260" y="78">client registered</text>
+            <text x="260" y="94" fill="#007F67">service user linked</text>
+            <text x="260" y="110">state applied</text>
+          </g>
+          <text x="14" y="186" font-size="10" fill="#54446A" class="code">RESULT LOG</text>
+          <g class="code" font-size="9">
+            <g class="pop"><rect x="14" y="194" width="432" height="16" fill="#FFFFFF"></rect><text x="24" y="205" fill="#3A2C4E">WMS_INBOUND <tspan fill="#007F67">[INFO]</tspan> client created, service user linked</text></g>
+            <g class="pop d2"><rect x="14" y="212" width="432" height="16" fill="#FFFFFF"></rect><text x="24" y="223" fill="#3A2C4E">EDI_ORDERS <tspan fill="#007F67">[INFO]</tspan> client created</text></g>
+            <g class="pop d4"><rect x="14" y="230" width="432" height="16" fill="#F1EBF8"></rect><text x="24" y="241" fill="#3A2C4E">SFDC_SYNC <tspan fill="#A85F00">[WARN]</tspan> already exists, left unchanged</text></g>
+            <g class="pop d6"><rect x="14" y="248" width="432" height="16" fill="#FFFFFF"></rect><text x="24" y="259" fill="#3A2C4E">BI_EXTRACT <tspan fill="#007F67">[INFO]</tspan> client created, disabled as declared</text></g>
+          </g>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================= WORKFLOW ENGINE ================= -->
+  <section id="workflow">
+    <div class="wrap split flip">
+      <figure class="art">
+        <figcaption class="art-head">
+          <span class="eyebrow">Workflow engine</span>
+          <span class="mono">execution #4183 &middot; open order lines</span>
+        </figcaption>
+        <svg viewBox="0 0 460 374" role="img" aria-label="Diagram: a workflow correcting delivery terms on 3412 open order lines - records selected, backed up, matched against a reference, updated in IFS and verified, with 3180 updated, 232 flagged for review and none failed">
+  <text x="14" y="14" class="code" font-size="9.5" fill="#54446A">JOB</text>
+  <text x="52" y="14" font-size="10.5" fill="#1E0B2E">Correct delivery terms on open order lines</text>
+  <text x="446" y="14" class="code" font-size="9.5" fill="#54446A" text-anchor="end">after the order load</text>
+  <line x1="14" y1="22" x2="446" y2="22" stroke="#CDBFE0"></line>
+  <text x="14" y="40" class="code" font-size="9.5" fill="#54446A">SELECTED RECORDS</text>
+  <text x="446" y="40" class="code" font-size="9.5" fill="#007F67" text-anchor="end">3 412 lines</text>
+  <g class="code" font-size="9">
+    <text x="14" y="56" fill="#54446A">ORDER</text>
+    <text x="86" y="56" fill="#54446A">LINE</text>
+    <text x="132" y="56" fill="#54446A">LEGACY TERM</text>
+    <text x="256" y="56" fill="#54446A">IFS DELIVERY TERM</text>
+    <rect x="14" y="62" width="432" height="16" fill="#FFFFFF"></rect>
+    <text x="14" y="73" fill="#3A2C4E">CO-100412</text>
+    <text x="86" y="73" fill="#3A2C4E">10</text>
+    <text x="132" y="73" fill="#3A2C4E">DDU-WHSE</text>
+    <text x="222" y="73" fill="#54446A">→</text>
+    <text class="pop d1" x="256" y="73" fill="#007F67">DAP</text>
+    <rect x="14" y="80" width="432" height="16" fill="#FFFFFF"></rect>
+    <text x="14" y="91" fill="#3A2C4E">CO-100412</text>
+    <text x="86" y="91" fill="#3A2C4E">20</text>
+    <text x="132" y="91" fill="#3A2C4E">EXW-PLANT2</text>
+    <text x="222" y="91" fill="#54446A">→</text>
+    <text class="pop d2" x="256" y="91" fill="#007F67">EXW</text>
+    <rect x="14" y="98" width="432" height="16" fill="#F1EBF8"></rect>
+    <text x="14" y="109" fill="#3A2C4E">CO-100587</text>
+    <text x="86" y="109" fill="#3A2C4E">30</text>
+    <text x="132" y="109" fill="#A85F00">LEGACY-04</text>
+    <text x="222" y="109" fill="#54446A">→</text>
+    <text class="pop d3" x="256" y="109" fill="#A85F00">no match · flagged</text>
+    <text x="14" y="128" fill="#54446A">+ 3 409 more lines in this run</text>
+  </g>
+  <line x1="14" y1="142" x2="446" y2="142" stroke="#CDBFE0"></line>
+  <text x="14" y="160" class="code" font-size="9.5" fill="#54446A">STEPS</text>
+  <g fill="none" stroke="#3F57E0" stroke-width="1.4">
+    <path class="flow" d="M110 190 H 130"></path>
+    <path class="flow d2" d="M222 190 H 242"></path>
+    <path class="flow d4" d="M334 190 H 354"></path>
+  </g>
+  <g fill="#007F67">
+    <circle class="pkt" r="2.8" style="offset-path:path('M110 190 H 130')"></circle>
+    <circle class="pkt d3" r="2.8" style="offset-path:path('M222 190 H 242')"></circle>
+    <circle class="pkt d5" r="2.8" style="offset-path:path('M334 190 H 354')"></circle>
+  </g>
+  <g class="code" font-size="9.5">
+    <rect class="visit" x="14" y="170" width="96" height="40" fill="#007F67" fill-opacity="0.12" stroke="#007F67"></rect>
+    <text x="24" y="186" fill="#1E0B2E">1 · back up</text>
+    <text x="24" y="200" fill="#3A2C4E" font-size="9">3 412 lines saved</text>
+    <rect class="visit v2" x="130" y="170" width="92" height="40" fill="#3F57E0" fill-opacity="0.12" stroke="#3F57E0"></rect>
+    <text x="140" y="186" fill="#1E0B2E">2 · match</text>
+    <text x="140" y="200" fill="#3A2C4E" font-size="9">term reference</text>
+    <rect class="visit v3" x="242" y="170" width="92" height="40" fill="#3F57E0" fill-opacity="0.12" stroke="#3F57E0"></rect>
+    <text x="252" y="186" fill="#1E0B2E">3 · update</text>
+    <text x="252" y="200" fill="#3A2C4E" font-size="9">in IFS, batched</text>
+    <rect class="visit v4" x="354" y="170" width="92" height="40" fill="#3F7A0A" fill-opacity="0.12" stroke="#3F7A0A"></rect>
+    <text x="364" y="186" fill="#1E0B2E">4 · verify</text>
+    <text x="364" y="200" fill="#3A2C4E" font-size="9">re-read + count</text>
+  </g>
+  <path class="draw d3" d="M176 210 V 232 H 246" fill="none" stroke="#A85F00" stroke-width="1.3"></path>
+  <text x="186" y="228" class="code" font-size="9" fill="#A85F00">no match</text>
+  <rect x="246" y="222" width="120" height="20" fill="#FFFFFF" stroke="#A85F00" stroke-opacity="0.6"></rect>
+  <text x="256" y="236" class="code" font-size="9" fill="#A85F00">held for review, not written</text>
+  <line x1="14" y1="258" x2="446" y2="258" stroke="#CDBFE0"></line>
+  <text x="14" y="276" class="code" font-size="9.5" fill="#54446A">OUTCOME</text>
+  <g class="count">
+    <rect x="14" y="284" width="136" height="38" fill="#FFFFFF" stroke="#007F67" stroke-opacity="0.5"></rect>
+    <text x="24" y="299" class="code" font-size="9" fill="#54446A">UPDATED</text>
+    <text x="24" y="314" font-size="15" font-weight="600" fill="#007F67">3 180</text>
+  </g>
+  <g class="count d2">
+    <rect x="162" y="284" width="136" height="38" fill="#FFFFFF" stroke="#A85F00" stroke-opacity="0.5"></rect>
+    <text x="172" y="299" class="code" font-size="9" fill="#54446A">HELD FOR REVIEW</text>
+    <text x="172" y="314" font-size="15" font-weight="600" fill="#A85F00">232</text>
+  </g>
+  <g class="count d4">
+    <rect x="310" y="284" width="136" height="38" fill="#FFFFFF" stroke="#CDBFE0"></rect>
+    <text x="320" y="299" class="code" font-size="9" fill="#54446A">FAILED</text>
+    <text x="320" y="314" font-size="15" font-weight="600" fill="#1E0B2E">0</text>
+  </g>
+  <rect x="14" y="332" width="432" height="3" fill="#F1EBF8"></rect>
+  <rect class="fill-bar" x="14" y="332" width="432" height="3" fill="#007F67" fill-opacity="0.85"></rect>
+  <g class="code" font-size="9" fill="#54446A">
+    <text x="14" y="350">running in the background</text>
+    <text x="176" y="350">reversible from the backup</text>
+    <text x="14" y="366" fill="#007F67">re-runnable per environment<tspan class="blink">_</tspan></text>
+  </g>
+</svg>
+      </figure>
+
+      <div>
+        <p class="eyebrow">Workflow engine</p>
+        <h2 class="h-sec">Fixing 3 412 order lines without touching them one by one.</h2>
+        <p class="lede">The load is rarely the end of it. Orders arrive carrying delivery terms the old system used and IFS does not recognise; balances need adjusting after the count; a batch of records has to be released once the data behind it is in place. Doing that by hand means someone in a screen for a week &mdash; and no record of what was changed.</p>
+        <p class="lede" style="margin-top:1.1rem">A workflow does it as one job: select the affected records, take a backup, apply the rule, and check the result &mdash; with every record's outcome written down and the whole run reversible if the rule was wrong.</p>
+
+        <ul class="jobs">
+          <li>
+            <div><b>Correct values after a load</b><br><span>Legacy codes translated to their IFS equivalent across every affected line, with unmatched values held for review instead of guessed.</span></div>
+            <span class="when">after each load</span>
+          </li>
+          <li>
+            <div><b>Release transactional records in bulk</b><br><span>Move orders, requisitions or shop orders to their live state once the master data behind them has been checked.</span></div>
+            <span class="when">before go-live</span>
+          </li>
+          <li>
+            <div><b>Reprocess what failed</b><br><span>Take the records a load rejected, apply the fix, and resubmit them &mdash; without re-running the whole import.</span></div>
+            <span class="when">any run</span>
+          </li>
+          <li>
+            <div><b>Adjust balances and dates</b><br><span>Apply a correction to inventory or scheduling data when the count and the extract disagree.</span></div>
+            <span class="when">before go-live</span>
+          </li>
+        </ul>
+
+        <ul class="feature-list">
+          <li><b>Reversible</b> &mdash; the affected records are captured before anything is written, so a run can be undone.</li>
+          <li><b>Accountable</b> &mdash; every record's outcome is recorded: updated, held for review, or failed, with the reason.</li>
+          <li><b>Repeatable</b> &mdash; the same job runs again in test, then in production, without being rebuilt.</li>
+          <li><b>Unattended</b> &mdash; long jobs run in the background while the team carries on with the rest of the migration.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCALE ================= -->
+  <section class="band" id="scale">
+    <div class="wrap split flip">
+      <figure class="art">
+        <figcaption class="art-head">
+          <span class="eyebrow">Volume &amp; throughput</span>
+          <span class="mono">1 240 000 rows &middot; 95% complete</span>
+        </figcaption>
+        <svg viewBox="0 0 460 330" role="img" aria-label="Diagram: a load of 1.24 million inventory balance rows moving into IFS a batch at a time, saved at checkpoints so an interrupted run continues from the last saved point, with live counts, rate and time remaining">
+  <text x="14" y="14" class="code" font-size="9.5" fill="#54446A">LOAD</text>
+  <text x="52" y="14" font-size="10.5" fill="#1E0B2E">Inventory balances · 1 240 000 rows</text>
+  <text x="446" y="14" class="code" font-size="9.5" fill="#007F67" text-anchor="end">running unattended</text>
+  <line x1="14" y1="22" x2="446" y2="22" stroke="#CDBFE0"></line>
+  <text x="14" y="42" class="code" font-size="9.5" fill="#54446A">A BATCH AT A TIME</text>
+  <rect x="14" y="52" width="86" height="58" rx="2" fill="#FFFFFF" stroke="#CDBFE0"></rect>
+  <text x="57" y="72" text-anchor="middle" font-size="10" fill="#1E0B2E">source</text>
+  <text x="57" y="86" text-anchor="middle" class="code" font-size="9" fill="#54446A">1 240 000</text>
+  <text x="57" y="99" text-anchor="middle" class="code" font-size="9" fill="#54446A">rows waiting</text>
+  <path class="link" d="M100 81 H 352" fill="none" stroke="#3F57E0" stroke-width="1.2" stroke-opacity="0.7"></path>
+  <g fill="#007F67">
+    <rect class="batch" x="-9" y="-4" width="18" height="8" rx="1" style="offset-path:path('M100 81 H 352')"></rect>
+    <rect class="batch b2" x="-9" y="-4" width="18" height="8" rx="1" style="offset-path:path('M100 81 H 352')"></rect>
+    <rect class="batch b3" x="-9" y="-4" width="18" height="8" rx="1" style="offset-path:path('M100 81 H 352')"></rect>
+    <rect class="batch b4" x="-9" y="-4" width="18" height="8" rx="1" style="offset-path:path('M100 81 H 352')"></rect>
+  </g>
+  <text x="226" y="109" text-anchor="middle" class="code" font-size="8" fill="#54446A">1 000 rows in each batch · nothing is held in memory</text>
+  <ellipse cx="400" cy="56" rx="46" ry="11" fill="#007F67" fill-opacity="0.16" stroke="#007F67"></ellipse>
+  <path class="accept" d="M354 56 V 100 C 354 107 375 112 400 112 C 425 112 446 107 446 100 V 56" fill="#007F67" fill-opacity="0.07" stroke="#007F67"></path>
+  <ellipse cx="400" cy="100" rx="46" ry="11" fill="none" stroke="#007F67" stroke-opacity="0.45"></ellipse>
+  <text x="400" y="84" text-anchor="middle" font-size="11" fill="#1E0B2E">IFS Cloud</text>
+  <line x1="14" y1="130" x2="446" y2="130" stroke="#CDBFE0"></line>
+  <text x="14" y="150" class="code" font-size="9.5" fill="#54446A">SAVED AS IT GOES</text>
+  <text x="446" y="150" class="code" font-size="9" fill="#54446A" text-anchor="end">a stopped run picks up from the last save</text>
+  <rect x="14" y="170" width="432" height="4" rx="2" fill="#F1EBF8"></rect>
+  <rect class="track" x="14" y="170" width="432" height="4" rx="2" fill="#007F67" fill-opacity="0.8"></rect>
+  <g fill="#007F67">
+    <circle class="save" cx="86" cy="172" r="4"></circle>
+    <circle class="save k2" cx="158" cy="172" r="4"></circle>
+    <circle class="save k3" cx="230" cy="172" r="4"></circle>
+    <circle class="save k4" cx="302" cy="172" r="4"></circle>
+    <circle class="save k5" cx="374" cy="172" r="4"></circle>
+  </g>
+  <g class="code" font-size="9" fill="#54446A">
+    <text x="86" y="190" text-anchor="middle">50 000</text>
+    <text x="158" y="190" text-anchor="middle">100 000</text>
+    <text x="230" y="190" text-anchor="middle">150 000</text>
+    <text x="302" y="190" text-anchor="middle">200 000</text>
+    <text x="374" y="190" text-anchor="middle" fill="#007F67">last save</text>
+  </g>
+  <line x1="14" y1="208" x2="446" y2="208" stroke="#CDBFE0"></line>
+  <text x="14" y="228" class="code" font-size="9.5" fill="#54446A">WHILE IT RUNS</text>
+  <g class="count">
+    <rect x="14" y="238" width="103" height="40" fill="#FFFFFF" stroke="#CDBFE0"></rect>
+    <text x="24" y="253" class="code" font-size="9" fill="#54446A">LOADED</text>
+    <text x="24" y="269" font-size="14" font-weight="600" fill="#007F67">1 180 000</text>
+  </g>
+  <g class="count k2">
+    <rect x="124" y="238" width="103" height="40" fill="#FFFFFF" stroke="#CDBFE0"></rect>
+    <text x="134" y="253" class="code" font-size="9" fill="#54446A">REMAINING</text>
+    <text x="134" y="269" font-size="14" font-weight="600" fill="#1E0B2E">60 000</text>
+  </g>
+  <g class="count k3">
+    <rect x="234" y="238" width="103" height="40" fill="#FFFFFF" stroke="#CDBFE0"></rect>
+    <text x="244" y="253" class="code" font-size="9" fill="#54446A">RATE</text>
+    <text x="244" y="269" font-size="14" font-weight="600" fill="#1E0B2E">4.6 MB/s</text>
+  </g>
+  <g class="count k4">
+    <rect x="344" y="238" width="102" height="40" fill="#FFFFFF" stroke="#CDBFE0"></rect>
+    <text x="354" y="253" class="code" font-size="9" fill="#54446A">TIME LEFT</text>
+    <text x="354" y="269" font-size="14" font-weight="600" fill="#1E0B2E">00:41</text>
+  </g>
+  <g class="code" font-size="9" fill="#54446A">
+    <text x="14" y="300">every record's outcome is written to the run log</text>
+    <text x="446" y="300" text-anchor="end" fill="#007F67">95% complete<tspan class="blink">_</tspan></text>
+    <text x="14" y="320">the team carries on with other work while this runs</text>
+  </g>
+</svg>
+      </figure>
+
+      <div>
+        <p class="eyebrow">Built for real volumes</p>
+        <h2 class="h-sec">Large loads finish, and you can prove it.</h2>
+        <p class="lede">Inventory balances, order lines and part catalogues run into the hundreds of thousands of records. NayoDM takes them a batch at a time and saves its position as it goes, so a large load is something the team starts and checks on rather than sits and watches.</p>
+        <ul class="feature-list">
+          <li><b>Nothing is loaded whole</b> &mdash; records are read a batch at a time, so the size of the file or the table does not decide whether the run survives.</li>
+          <li><b>It saves as it goes</b> &mdash; the load is written in chunks, and a run that stops or is interrupted continues from the last saved point instead of starting again.</li>
+          <li><b>You can see where it is</b> &mdash; records loaded, records remaining, current rate and time left, updated while it runs.</li>
+          <li><b>Sized to the environment</b> &mdash; how much is read and written at a time is a setting, so a modest test system and a production environment can both be loaded sensibly.</li>
+          <li><b>Every run is written down</b> &mdash; each record's outcome is recorded for handover and audit.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DEMO ================= -->
+  <section id="demo">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">See it run</p>
+        <h2 class="h-sec">The tool itself, on real data.</h2>
+        <p class="lede">A walkthrough of NayoDM in use: connecting an IFS environment, choosing a source, mapping it to the target, running the checks and loading the records &mdash; the same sequence your team follows on every migration object.</p>
+        <ul class="demo-chapters">
+          <li><span class="t">01</span><span>Connecting an environment and starting a project</span></li>
+          <li><span class="t">02</span><span>Choosing the source and reading the records</span></li>
+          <li><span class="t">03</span><span>Mapping to the target and setting the rules</span></li>
+          <li><span class="t">04</span><span>Running the checks and clearing what they find</span></li>
+          <li><span class="t">05</span><span>Loading into IFS, with progress and the run log</span></li>
+        </ul>
+        <p class="demo-note">Prefer a session against your own data? <a href="mailto:info@nayotech.com?subject=NayoDM%20demo" style="color:var(--mint)">Book a demo</a>.</p>
+      </div>
+
+      <div class="demo-frame" data-video="cyUgkqRwkp0">
+        <button class="demo-facade" type="button" aria-label="Play the Nayo Data Migration Tool demo">
+          <img src="assets/nayodm-icon.png" alt="" width="40" height="40">
+          <span class="play">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 2 L17 10 L4 18 Z" fill="#17F1C2"></path></svg>
+          </span>
+          <span class="label">Nayo Data Migration Tool &mdash; demo</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CAPABILITY GRID ================= -->
+  <section class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">The rest of the toolkit</p>
+        <h2 class="h-sec">Everything a migration needs after the first entity loads.</h2>
+        <p class="lede">A migration is never one table. NayoDM covers the dependencies, the documents and the environments around the load.</p>
+      </div>
+      <div class="grid-3">
+        <div class="cell">
+          <span class="tag">Sequencing</span>
+          <h3>Entity dependency tracking</h3>
+          <p>See which migration entities depend on which, so containers load in an order IFS will accept and a re-run doesn't orphan records.</p>
+        </div>
+        <div class="cell">
+          <span class="tag">Templates</span>
+          <h3>Import templates</h3>
+          <p>Publish a workbook that already matches the target entity, so data collection starts in the right shape and returns ready to load.</p>
+        </div>
+        <div class="cell">
+          <span class="tag">Extensibility</span>
+          <h3>Custom fields</h3>
+          <p>Custom fields defined in IFS Cloud are read from the target's metadata and mapped exactly like standard attributes.</p>
+        </div>
+        <div class="cell">
+          <span class="tag">Inspection</span>
+          <h3>Container insight</h3>
+          <p>Query staged data before and after a load, with live counts and quick filters for the rows IFS accepted or rejected.</p>
+        </div>
+        <div class="cell">
+          <span class="tag">Environments</span>
+          <h3>Multi-environment control</h3>
+          <p>Keep IFS Cloud environments and legacy IEE data sources side by side, switch the active target deliberately, and always see which one is live.</p>
+        </div>
+        <div class="cell">
+          <span class="tag">Assurance</span>
+          <h3>Structured run logs</h3>
+          <p>Every import, document run and workflow execution is recorded with its outcome, readable in the tool and exportable for audit.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STATS ================= -->
+  <section style="padding-block:0">
+    <div class="stats-band"><div class="wrap stats">
+      <div class="stat"><b>60+</b><span>IFS upgrades delivered</span></div>
+      <div class="stat"><b>20</b><span>IFS Cloud upgrades: 10 live, 10 in flight</span></div>
+      <div class="stat"><b>7</b><span>Years of IFS delivery experience</span></div>
+      <div class="stat"><b>4</b><span>Import sources, one wizard</span></div>
+    </div></div>
+  </section>
+
+  <!-- ================= WHY ================= -->
+  <section class="band" id="why">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Why choose NayoDM</p>
+        <h2 class="h-sec">Built by the team that runs the upgrades.</h2>
+        <p class="lede">NayoDM comes out of delivery work, not a product lab. It is lightweight, streamlined and scalable, and it keeps migration aligned with the IFS Evergreen strategy &mdash; faster, more precise data movement with minimal disruption to your application.</p>
+        <ul class="feature-list">
+          <li><b>Deep integration expertise</b> &mdash; Supply Chain, Salesforce, EDI, TMS and more.</li>
+          <li><b>A proven upgrade model</b> that minimises risk and keeps outcomes predictable.</li>
+          <li><b>Lower cost of ownership</b> by adopting Evergreen and reducing modifications.</li>
+          <li><b>Supported by the Nayo team</b> that builds, releases and maintains the tool.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="quote">
+          <p>Built by experts who understand IFS end-to-end, NayoDM bridges technical precision with practical usability &mdash; a smarter, reliable and right-sized solution for teams implementing IFS Cloud.</p>
+          <cite>Nayo Technologies &mdash; IFS delivery team</cite>
+        </div>
+        <ul class="feature-list" style="margin-top:2.2rem">
+          <li><b>Right-sized</b> &mdash; the scope a migration actually needs, without the licence and integration weight of an enterprise data platform.</li>
+          <li><b>Aligned to Evergreen</b> &mdash; a migration approach that survives continuous IFS updates instead of being rebuilt around them.</li>
+          <li><b>Repeatable across environments</b> &mdash; the same project, mappings and workflows run against development, test and production.</li>
+          <li><b>Owned by your team</b> &mdash; consultants run migrations directly, with Nayo support behind them when needed.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= AI ROADMAP ================= -->
+  <section id="ai-roadmap">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="badge-row">
+          <span class="pill">Coming soon</span>
+          <span class="eyebrow">NayoDM 3.0.0 &middot; AI-ready migration tool</span>
+        </div>
+        <h2 class="h-sec">AI for IFS data migration.</h2>
+        <p class="lede">AI features landing in NayoDM 3.0.0.</p>
+      </div>
+
+      <div class="carousel" aria-roledescription="carousel" aria-label="NayoAI features"><div class="c-stage"><div class="c-slide"><div class="c-text"><p class="n">01 / 04</p><b>AI field data flow</b><span>Trace every field from source to IFS.</span></div><div class="c-vis"><svg class="vis" viewBox="0 0 360 200" aria-hidden="true"><defs><pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.8" class="dotc"/></pattern></defs><rect class="wn" x="0.5" y="0.5" width="359" height="199" rx="6"/><path class="hd" d="M0.5 6.5a6 6 0 0 1 6-6h347a6 6 0 0 1 6 6V20H0.5z"/><line class="rule" x1="0" y1="20" x2="360" y2="20"/><circle class="dotw" cx="11" cy="10" r="2.5"/><text class="ut m" x="22" y="13.5" text-anchor="start">Field lineage</text><g class="an pop" style="--d:0s"><rect class="bd0 fl" x="14" y="28" width="210" height="22" rx="4"/></g><text class="ut " x="22" y="42.5" text-anchor="start">CustomerId</text><rect class="cv an unc fl" style="--d:0.4s;--t:1.2s" x="18" y="32" width="202" height="14"/><g class="an pop press" style="--d:1.6s"><rect class="bp" x="232" y="28" width="70" height="22" rx="4"/><text class="ut bt" x="267.0" y="42.5" text-anchor="middle">Trace field</text></g><g class="an pop" style="--d:1.6s"><rect class="tg info" x="308" y="31" width="40" height="15" rx="2"/><text class="ut tgt info" x="328.0" y="41.5" text-anchor="middle">AI</text></g><g class="an pop" style="--d:2.0s"><rect class="cd " x="14" y="80" width="92" height="52" rx="6"/><text class="ut m s" x="22" y="96" text-anchor="start">customers.xlsx</text><text class="ut b " x="22" y="117" text-anchor="start">CUST_ID</text><circle class="hn" cx="14" cy="106" r="3"/><circle class="hn" cx="106" cy="106" r="3"/></g><g class="an pop" style="--d:2.5s"><rect class="cd " x="134" y="80" width="92" height="52" rx="6"/><text class="ut m s" x="142" y="96" text-anchor="start">Transform</text><text class="ut b mono" x="142" y="117" text-anchor="start">pad(10, '0')</text><circle class="hn" cx="134" cy="106" r="3"/><circle class="hn" cx="226" cy="106" r="3"/></g><g class="an pop" style="--d:3.0s"><rect class="cd hl" x="254" y="80" width="92" height="52" rx="6"/><text class="ut m s" x="262" y="96" text-anchor="start">IFS Cloud</text><text class="ut b " x="262" y="117" text-anchor="start">CustomerId</text><circle class="hn" cx="254" cy="106" r="3"/><circle class="hn" cx="346" cy="106" r="3"/></g><path class="eg an flow" style="--d:2.3s" d="M106 106 H134"/><path class="eg an flow" style="--d:2.8s" d="M226 106 H254"/><g class="an pop" style="--d:3.4s"><text class="ut m" x="14" y="160" text-anchor="start">3 hops · 1 transform · all rows resolved</text></g><g class="an pop" style="--d:3.6s"><rect class="tg ok" x="14" y="168" width="96" height="15" rx="2"/><text class="ut tgt ok" x="62.0" y="178.5" text-anchor="middle">Lineage complete</text></g></svg></div></div><div class="c-slide"><div class="c-text"><p class="n">02 / 04</p><b>Error insight</b><span>Understand why rows fail and how to fix them.</span></div><div class="c-vis"><svg class="vis" viewBox="0 0 360 200" aria-hidden="true"><defs><pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.8" class="dotc"/></pattern></defs><rect class="wn" x="0.5" y="0.5" width="359" height="199" rx="6"/><path class="hd" d="M0.5 6.5a6 6 0 0 1 6-6h347a6 6 0 0 1 6 6V20H0.5z"/><line class="rule" x1="0" y1="20" x2="360" y2="20"/><circle class="dotw" cx="11" cy="10" r="2.5"/><text class="ut m" x="22" y="13.5" text-anchor="start">Execution log</text><rect class="hd" x="14" y="28" width="332" height="20"/><text class="ut m" x="22" y="41" text-anchor="start">Row</text><text class="ut m" x="70" y="41" text-anchor="start">Status</text><text class="ut m" x="130" y="41" text-anchor="start">Message</text><g class="an pop" style="--d:0.0s"><line class="rule" x1="14" y1="70" x2="346" y2="70"/><text class="ut mono" x="22" y="63" text-anchor="start">1041</text><g><rect class="tg ok" x="66" y="51" width="44" height="15" rx="2"/><text class="ut tgt ok" x="88.0" y="61.5" text-anchor="middle">Success</text></g><text class="ut " x="130" y="63" text-anchor="start">Customer created</text></g><g class="an pop" style="--d:0.15s"><line class="rule" x1="14" y1="92" x2="346" y2="92"/><text class="ut mono" x="22" y="85" text-anchor="start">1042</text><g><rect class="tg ok" x="66" y="73" width="44" height="15" rx="2"/><text class="ut tgt ok" x="88.0" y="83.5" text-anchor="middle">Success</text></g><text class="ut " x="130" y="85" text-anchor="start">Customer created</text></g><g class="an pop" style="--d:0.3s"><rect class="rw er sel" x="14" y="92" width="332" height="22"/><text class="ut mono" x="22" y="107" text-anchor="start">1043</text><g><rect class="tg err" x="66" y="95" width="44" height="15" rx="2"/><text class="ut tgt err" x="88.0" y="105.5" text-anchor="middle">Failed</text></g><text class="ut ec" x="130" y="107" text-anchor="start">ORA-01438: value too large</text></g><g class="an pop" style="--d:0.44999999999999996s"><line class="rule" x1="14" y1="136" x2="346" y2="136"/><text class="ut mono" x="22" y="129" text-anchor="start">1044</text><g><rect class="tg ok" x="66" y="117" width="44" height="15" rx="2"/><text class="ut tgt ok" x="88.0" y="127.5" text-anchor="middle">Success</text></g><text class="ut " x="130" y="129" text-anchor="start">Customer created</text></g><rect class="selo an pulse" style="--d:1.2s" x="14" y="92" width="332" height="22"/><g class="an slide" style="--d:1.6s"><rect class="cd" x="14" y="142" width="332" height="50" rx="6"/><g><rect class="tg info" x="22" y="150" width="58" height="15" rx="2"/><text class="ut tgt info" x="51.0" y="160.5" text-anchor="middle">AI insight</text></g><text class="ut b s" x="88" y="161" text-anchor="start">CUST_NAME has 52 characters; the target allows 40.</text><text class="ut m s" x="22" y="180" text-anchor="start">Trim to 40 characters, or widen the target column.</text></g><g class="an pop press" style="--d:2.4s"><rect class="bp" x="272" y="164" width="66" height="22" rx="4"/><text class="ut bt" x="305.0" y="178.5" text-anchor="middle">Apply fix</text></g></svg></div></div><div class="c-slide"><div class="c-text"><p class="n">03 / 04</p><b>Auto mapping</b><span>Fields mapped using standard IFS logic.</span></div><div class="c-vis"><svg class="vis" viewBox="0 0 360 200" aria-hidden="true"><defs><pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.8" class="dotc"/></pattern></defs><rect class="wn" x="0.5" y="0.5" width="359" height="199" rx="6"/><path class="hd" d="M0.5 6.5a6 6 0 0 1 6-6h347a6 6 0 0 1 6 6V20H0.5z"/><line class="rule" x1="0" y1="20" x2="360" y2="20"/><circle class="dotw" cx="11" cy="10" r="2.5"/><text class="ut m" x="22" y="13.5" text-anchor="start">Field mapping</text><text class="ut m" x="14" y="38" text-anchor="start">Field Name</text><text class="ut m" x="150" y="38" text-anchor="start">Mapped column</text><g class="an pop press" style="--d:0s"><rect class="bp" x="278" y="26" width="68" height="22" rx="4"/><text class="ut bt" x="312.0" y="40.5" text-anchor="middle">Auto map</text></g><line class="rule" x1="14" y1="86" x2="346" y2="86"/><text class="ut b" x="14" y="73" text-anchor="start">CatalogNo</text><g><rect class="tg ok" x="100" y="62" width="14" height="15" rx="2"/><text class="ut tgt ok" x="107.0" y="72.5" text-anchor="middle">I</text></g><g><rect class="tg ok" x="118" y="62" width="14" height="15" rx="2"/><text class="ut tgt ok" x="125.0" y="72.5" text-anchor="middle">U</text></g><rect class="bd0 fl" x="150" y="58" width="116" height="22" rx="4"/><text class="ut " x="158" y="73" text-anchor="start">PART_NO</text><rect class="cv an unc fl" style="--d:1.0s;--t:0.5s" x="154" y="62" width="108" height="14"/><g class="an pop" style="--d:1.5s"><rect class="tg ok" x="276" y="62" width="34" height="15" rx="2"/><text class="ut tgt ok" x="293.0" y="72.5" text-anchor="middle">92%</text></g><line class="rule" x1="14" y1="120" x2="346" y2="120"/><text class="ut b" x="14" y="107" text-anchor="start">Address1</text><g><rect class="tg ok" x="100" y="96" width="14" height="15" rx="2"/><text class="ut tgt ok" x="107.0" y="106.5" text-anchor="middle">I</text></g><g><rect class="tg ok" x="118" y="96" width="14" height="15" rx="2"/><text class="ut tgt ok" x="125.0" y="106.5" text-anchor="middle">U</text></g><rect class="bd0 fl" x="150" y="92" width="116" height="22" rx="4"/><text class="ut " x="158" y="107" text-anchor="start">ADDRESS</text><rect class="cv an unc fl" style="--d:1.5s;--t:0.5s" x="154" y="96" width="108" height="14"/><g class="an pop" style="--d:2.0s"><rect class="tg ok" x="276" y="96" width="34" height="15" rx="2"/><text class="ut tgt ok" x="293.0" y="106.5" text-anchor="middle">78%</text></g><line class="rule" x1="14" y1="154" x2="346" y2="154"/><text class="ut b" x="14" y="141" text-anchor="start">CurrencyCode</text><g><rect class="tg ok" x="100" y="130" width="14" height="15" rx="2"/><text class="ut tgt ok" x="107.0" y="140.5" text-anchor="middle">I</text></g><g><rect class="tg ok" x="118" y="130" width="14" height="15" rx="2"/><text class="ut tgt ok" x="125.0" y="140.5" text-anchor="middle">U</text></g><rect class="bd0 fl" x="150" y="126" width="116" height="22" rx="4"/><text class="ut " x="158" y="141" text-anchor="start">CURRENCY</text><rect class="cv an unc fl" style="--d:2.0s;--t:0.5s" x="154" y="130" width="108" height="14"/><g class="an pop" style="--d:2.5s"><rect class="tg ok" x="276" y="130" width="34" height="15" rx="2"/><text class="ut tgt ok" x="293.0" y="140.5" text-anchor="middle">96%</text></g><line class="rule" x1="14" y1="188" x2="346" y2="188"/><text class="ut b" x="14" y="175" text-anchor="start">CreditLimit</text><g><rect class="tg ok" x="100" y="164" width="14" height="15" rx="2"/><text class="ut tgt ok" x="107.0" y="174.5" text-anchor="middle">I</text></g><g><rect class="tg ok" x="118" y="164" width="14" height="15" rx="2"/><text class="ut tgt ok" x="125.0" y="174.5" text-anchor="middle">U</text></g><rect class="bd0 fl" x="150" y="160" width="116" height="22" rx="4"/><text class="ut " x="158" y="175" text-anchor="start">CR_LIMIT</text><rect class="cv an unc fl" style="--d:2.5s;--t:0.5s" x="154" y="164" width="108" height="14"/><g class="an pop" style="--d:3.0s"><rect class="tg warn" x="276" y="164" width="34" height="15" rx="2"/><text class="ut tgt warn" x="293.0" y="174.5" text-anchor="middle">64%</text></g></svg></div></div><div class="c-slide"><div class="c-text"><p class="n">04 / 04</p><b>AI workflow design</b><span>Describe the job, AI drafts the workflow.</span></div><div class="c-vis"><svg class="vis" viewBox="0 0 360 200" aria-hidden="true"><defs><pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.8" class="dotc"/></pattern></defs><rect class="wn" x="0.5" y="0.5" width="359" height="199" rx="6"/><path class="hd" d="M0.5 6.5a6 6 0 0 1 6-6h347a6 6 0 0 1 6 6V20H0.5z"/><line class="rule" x1="0" y1="20" x2="360" y2="20"/><circle class="dotw" cx="11" cy="10" r="2.5"/><text class="ut m" x="22" y="13.5" text-anchor="start">Workflow editor</text><g class="an pop" style="--d:0s"><rect class="bd0 fl" x="14" y="28" width="264" height="22" rx="4"/></g><text class="ut " x="22" y="42.5" text-anchor="start">Import vendors from Excel, validate, then load</text><rect class="cv an unc fl" style="--d:0.4s;--t:1.2s" x="18" y="32" width="256" height="14"/><g class="an pop press" style="--d:1.8s"><rect class="bp" x="286" y="28" width="60" height="22" rx="4"/><text class="ut bt" x="316.0" y="42.5" text-anchor="middle">Draft</text></g><rect class="cvs" x="14" y="62" width="332" height="128" rx="4"/><rect x="14" y="62" width="332" height="128" rx="4" fill="url(#dots)"/><g class="an pop" style="--d:2.2s"><rect class="cd" x="24" y="100" width="66" height="44" rx="6"/><text class="ut b" x="57" y="119" text-anchor="middle">Start</text><text class="ut m s" x="57" y="134" text-anchor="middle">start</text><circle class="hn" cx="24" cy="122" r="3"/><circle class="hn" cx="90" cy="122" r="3"/></g><path class="eg an flow" style="--d:2.5s" d="M90 122 H108"/><g class="an pop" style="--d:2.7s"><rect class="cd" x="108" y="100" width="66" height="44" rx="6"/><text class="ut b" x="141" y="119" text-anchor="middle">Read file</text><text class="ut m s" x="141" y="134" text-anchor="middle">excel</text><circle class="hn" cx="108" cy="122" r="3"/><circle class="hn" cx="174" cy="122" r="3"/></g><path class="eg an flow" style="--d:3.0s" d="M174 122 H192"/><g class="an pop" style="--d:3.2s"><rect class="cd" x="192" y="100" width="66" height="44" rx="6"/><text class="ut b" x="225" y="119" text-anchor="middle">Validate</text><text class="ut m s" x="225" y="134" text-anchor="middle">check</text><circle class="hn" cx="192" cy="122" r="3"/><circle class="hn" cx="258" cy="122" r="3"/></g><path class="eg an flow" style="--d:3.5s" d="M258 122 H276"/><g class="an pop" style="--d:3.7s"><rect class="cd" x="276" y="100" width="66" height="44" rx="6"/><text class="ut b" x="309" y="119" text-anchor="middle">Records</text><text class="ut m s" x="309" y="134" text-anchor="middle">load</text><circle class="hn" cx="276" cy="122" r="3"/><circle class="hn" cx="342" cy="122" r="3"/></g><g class="an pop" style="--d:4.4s"><rect class="tg ok" x="24" y="164" width="108" height="15" rx="2"/><text class="ut tgt ok" x="78.0" y="174.5" text-anchor="middle">Draft ready to review</text></g></svg></div></div></div><div class="c-dots"></div></div>
+
+<p class="demo-note">&hellip;and more.</p>
+    </div>
+  </section>
+
+  <!-- ================= AI TRANSFORM GENERATOR ================= -->
+  <section class="band" id="ai-transforms">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="badge-row">
+          <span class="pill">Coming soon</span>
+          <span class="eyebrow">NayoDM 3.0.0 &middot; NayoAI</span>
+        </div>
+        <h2 class="h-sec">Describe the rule. Get the transform.</h2>
+        <p class="lede">NayoAI writes the JavaScript transform or Oracle SQL for a field from a plain-language description, drawing on your own migration knowledge base. Every result is run against sample rows and repaired automatically before you see it, and nothing is applied until you confirm.</p>
+      </div>
+      <div class="carousel" aria-roledescription="carousel" aria-label="NayoAI features"><div class="c-stage"><div class="c-slide"><div class="c-text"><p class="n">01 / 04</p><b>JavaScript transforms</b><span>Generated in the same form as hand-written transforms, tested on real sample rows.</span></div><div class="c-vis"><svg class="vis" viewBox="0 0 360 200" aria-hidden="true"><defs><pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.8" class="dotc"/></pattern></defs><rect class="wn" x="0.5" y="0.5" width="359" height="199" rx="6"/><path class="hd" d="M0.5 6.5a6 6 0 0 1 6-6h347a6 6 0 0 1 6 6V20H0.5z"/><line class="rule" x1="0" y1="20" x2="360" y2="20"/><circle class="dotw" cx="11" cy="10" r="2.5"/><text class="ut m" x="22" y="13.5" text-anchor="start">Transform editor</text><g class="an pop" style="--d:0s"><rect class="bd0 fl" x="14" y="28" width="262" height="22" rx="4"/></g><text class="ut " x="22" y="42.5" text-anchor="start">Pad customer id to 10 digits</text><rect class="cv an unc fl" style="--d:0.3s;--t:1.2s" x="18" y="32" width="254" height="14"/><g class="an pop press" style="--d:1.6s"><rect class="bp" x="284" y="28" width="62" height="22" rx="4"/><text class="ut bt" x="315.0" y="42.5" text-anchor="middle">Generate</text></g><rect class="ed" x="14" y="60" width="332" height="74" rx="4"/><text class="ut mono code" x="24" y="82" text-anchor="start"><tspan class="kw">const</tspan> id = ctx.row.CUST_ID;</text><rect class="cv an unc ce" style="--d:1.9s;--t:0.7s" x="20" y="70" width="320" height="16"/><text class="ut mono code" x="24" y="102" text-anchor="start"><tspan class="kw">return</tspan> ctx.fn.pad(id, 10, <tspan class="st">"0"</tspan>);</text><rect class="cv an unc ce" style="--d:2.7s;--t:0.7s" x="20" y="90" width="320" height="16"/><g class="an pop" style="--d:3.6s"><g><rect class="tg info" x="14" y="144" width="90" height="15" rx="2"/><text class="ut tgt info" x="59.0" y="154.5" text-anchor="middle">Test run</text></g></g><g class="an pop" style="--d:3.8s"><g><rect class="tg ok" x="110" y="144" width="100" height="15" rx="2"/><text class="ut tgt ok" x="160.0" y="154.5" text-anchor="middle">3 / 3 rows passed</text></g><text class="ut mono" x="14" y="174" text-anchor="start">1042  ->  0000001042</text><text class="ut mono m" x="14" y="188" text-anchor="start">88    ->  0000000088</text></g></svg></div></div><div class="c-slide"><div class="c-text"><p class="n">02 / 04</p><b>Oracle SQL load logic</b><span>Read-only SELECTs validated against the source before they are offered.</span></div><div class="c-vis"><svg class="vis" viewBox="0 0 360 200" aria-hidden="true"><defs><pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.8" class="dotc"/></pattern></defs><rect class="wn" x="0.5" y="0.5" width="359" height="199" rx="6"/><path class="hd" d="M0.5 6.5a6 6 0 0 1 6-6h347a6 6 0 0 1 6 6V20H0.5z"/><line class="rule" x1="0" y1="20" x2="360" y2="20"/><circle class="dotw" cx="11" cy="10" r="2.5"/><text class="ut m" x="22" y="13.5" text-anchor="start">Custom SQL source</text><g class="an pop" style="--d:0s"><rect class="bd0 fl" x="14" y="28" width="262" height="22" rx="4"/></g><text class="ut " x="22" y="42.5" text-anchor="start">Customers loaded from the legacy table</text><rect class="cv an unc fl" style="--d:0.3s;--t:1.2s" x="18" y="32" width="254" height="14"/><g class="an pop press" style="--d:1.6s"><rect class="bp" x="284" y="28" width="62" height="22" rx="4"/><text class="ut bt" x="315.0" y="42.5" text-anchor="middle">Generate</text></g><rect class="ed" x="14" y="60" width="332" height="62" rx="4"/><text class="ut mono code" x="24" y="78" text-anchor="start"><tspan class="kw">SELECT</tspan> cust_id, cust_name</text><rect class="cv an unc ce" style="--d:1.9s;--t:0.5s" x="20" y="67" width="320" height="14"/><text class="ut mono code" x="24" y="94" text-anchor="start"><tspan class="kw">FROM</tspan>   customer_tab</text><rect class="cv an unc ce" style="--d:2.4s;--t:0.5s" x="20" y="83" width="320" height="14"/><text class="ut mono code" x="24" y="110" text-anchor="start"><tspan class="kw">WHERE</tspan>  rownum &lt;= <tspan class="st">100</tspan></text><rect class="cv an unc ce" style="--d:2.9s;--t:0.5s" x="20" y="99" width="320" height="14"/><g class="an pop" style="--d:3.6s"><g><rect class="tg info" x="14" y="130" width="62" height="15" rx="2"/><text class="ut tgt info" x="45.0" y="140.5" text-anchor="middle">READ ONLY</text></g></g><g class="an pop" style="--d:3.7s"><g><rect class="tg ok" x="82" y="130" width="66" height="15" rx="2"/><text class="ut tgt ok" x="115.0" y="140.5" text-anchor="middle">3 rows</text></g></g><g class="an slide" style="--d:3.9s"><rect class="hd" x="14" y="150" width="332" height="16"/><text class="ut m s" x="22" y="161" text-anchor="start">CUST_ID</text><text class="ut m s" x="120" y="161" text-anchor="start">CUST_NAME</text><text class="ut mono s" x="22" y="178" text-anchor="start">C001</text><text class="ut s" x="120" y="178" text-anchor="start">Contoso Ltd</text><text class="ut mono s" x="22" y="192" text-anchor="start">C002</text><text class="ut s" x="120" y="192" text-anchor="start">Fabrikam AB</text></g></svg></div></div><div class="c-slide"><div class="c-text"><p class="n">03 / 04</p><b>Your knowledge base</b><span>Mapping rules and conventions from your own notes guide every suggestion.</span></div><div class="c-vis"><svg class="vis" viewBox="0 0 360 200" aria-hidden="true"><defs><pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.8" class="dotc"/></pattern></defs><rect class="wn" x="0.5" y="0.5" width="359" height="199" rx="6"/><path class="hd" d="M0.5 6.5a6 6 0 0 1 6-6h347a6 6 0 0 1 6 6V20H0.5z"/><line class="rule" x1="0" y1="20" x2="360" y2="20"/><circle class="dotw" cx="11" cy="10" r="2.5"/><text class="ut m" x="22" y="13.5" text-anchor="start">Settings · AI Service</text><text class="ut b" x="14" y="38" text-anchor="start">Knowledge base</text><rect class="bd0 fl" x="206" y="26" width="140" height="22" rx="4"/><text class="ut " x="214" y="40.5" text-anchor="start">IEE &#8594; IFS Cloud</text><g class="an pop" style="--d:0.3s"><rect class="rw hlr" x="14" y="58" width="332" height="26" rx="3"/><text class="ut mono" x="24" y="75" text-anchor="start">customer-master.md</text><g><rect class="tg mut" x="170" y="63" width="52" height="15" rx="2"/><text class="ut tgt mut" x="196.0" y="73.5" text-anchor="middle">customer</text></g></g><g class="an pop" style="--d:1.9s"><rect class="tg ok" x="284" y="63" width="54" height="15" rx="2"/><text class="ut tgt ok" x="311.0" y="73.5" text-anchor="middle">context</text></g><g class="an pop" style="--d:0.6499999999999999s"><rect class="rw hlr" x="14" y="86" width="332" height="26" rx="3"/><text class="ut mono" x="24" y="103" text-anchor="start">currency-codes.md</text><g><rect class="tg mut" x="170" y="91" width="52" height="15" rx="2"/><text class="ut tgt mut" x="196.0" y="101.5" text-anchor="middle">lookup</text></g></g><g class="an pop" style="--d:2.25s"><rect class="tg ok" x="284" y="91" width="54" height="15" rx="2"/><text class="ut tgt ok" x="311.0" y="101.5" text-anchor="middle">context</text></g><g class="an pop" style="--d:1.0s"><rect class="rw hlr" x="14" y="114" width="332" height="26" rx="3"/><text class="ut mono" x="24" y="131" text-anchor="start">address-rules.md</text><g><rect class="tg mut" x="170" y="119" width="52" height="15" rx="2"/><text class="ut tgt mut" x="196.0" y="129.5" text-anchor="middle">rules</text></g></g><g class="an pop" style="--d:2.5999999999999996s"><rect class="tg ok" x="284" y="119" width="54" height="15" rx="2"/><text class="ut tgt ok" x="311.0" y="129.5" text-anchor="middle">context</text></g><g class="an pop" style="--d:1.3499999999999999s"><rect class="rw " x="14" y="142" width="332" height="26" rx="3"/><text class="ut mono" x="24" y="159" text-anchor="start">naming-standards.md</text><g><rect class="tg mut" x="170" y="147" width="52" height="15" rx="2"/><text class="ut tgt mut" x="196.0" y="157.5" text-anchor="middle">naming</text></g></g><g class="an pop" style="--d:3.4s"><text class="ut m s" x="14" y="188" text-anchor="start">3 notes sent to NayoAI as context for this mapping</text></g></svg></div></div><div class="c-slide"><div class="c-text"><p class="n">04 / 04</p><b>Human in the loop</b><span>Review, edit or reject each suggestion; the existing mapping is never overwritten silently.</span></div><div class="c-vis"><svg class="vis" viewBox="0 0 360 200" aria-hidden="true"><defs><pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.8" class="dotc"/></pattern></defs><rect class="wn" x="0.5" y="0.5" width="359" height="199" rx="6"/><path class="hd" d="M0.5 6.5a6 6 0 0 1 6-6h347a6 6 0 0 1 6 6V20H0.5z"/><line class="rule" x1="0" y1="20" x2="360" y2="20"/><circle class="dotw" cx="11" cy="10" r="2.5"/><text class="ut m" x="22" y="13.5" text-anchor="start">Field mapping</text><rect class="ov" x="0.5" y="20" width="359" height="179.5"/><g class="an pop" style="--d:0s"><rect class="cd" x="40" y="34" width="280" height="140" rx="8"/><text class="ut b" x="56" y="56" text-anchor="start">Review suggestion</text><line class="rule" x1="40" y1="66" x2="320" y2="66"/><text class="ut mono b" x="56" y="90" text-anchor="start">CR_LIMIT</text><text class="ut m" x="124" y="90" text-anchor="start">&#8594;</text><text class="ut mono b" x="142" y="90" text-anchor="start">CreditLimit</text><g><rect class="tg warn" x="268" y="78" width="36" height="15" rx="2"/><text class="ut tgt warn" x="286.0" y="88.5" text-anchor="middle">64%</text></g><text class="ut m s" x="56" y="110" text-anchor="start">Low confidence. Check the mapping before it is applied.</text><line class="rule" x1="40" y1="130" x2="320" y2="130"/></g><g class="an pop " style="--d:0.8s"><rect class="bd0" x="180" y="142" width="62" height="22" rx="4"/><text class="ut " x="211.0" y="156.5" text-anchor="middle">Reject</text></g><g class="an pop " style="--d:1.0s"><rect class="bp" x="250" y="142" width="56" height="22" rx="4"/><text class="ut bt" x="278.0" y="156.5" text-anchor="middle">Accept</text></g><rect class="selo an pulse" style="--d:2.2s" x="248" y="140" width="60" height="26" rx="5"/><g class="an pop" style="--d:3.0s"><g><rect class="tg ok" x="56" y="146" width="76" height="15" rx="2"/><text class="ut tgt ok" x="94.0" y="156.5" text-anchor="middle">Applied by you</text></g></g></svg></div></div></div><div class="c-dots"></div></div>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section>
+    <div class="wrap cta-in">
+      <div>
+        <h2 class="h-sec" style="margin-top:0">See NayoDM against your own data.</h2>
+        <p class="lede">Bring one migration object and a representative extract. We will map it, check it and load it into a sandbox environment during the session.</p>
+      </div>
+      <div style="display:flex;gap:0.8rem;flex-wrap:wrap">
+        <a class="btn btn-primary" href="mailto:info@nayotech.com?subject=NayoDM%20demo">Book a demo</a>
+        <a class="btn btn-ghost" href="mailto:info@nayotech.com?subject=NayoDM%20datasheet">Request the datasheet</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Click-to-load: no YouTube request is made until the visitor asks for the video.
+  document.querySelectorAll('.demo-frame').forEach(function (frame) {
+    var facade = frame.querySelector('.demo-facade');
+    facade.addEventListener('click', function () {
+      var id = frame.dataset.video;
+      if (!id || id === 'VIDEO_ID') {
+        facade.querySelector('.label').textContent = 'Video link not configured yet';
+        return;
+      }
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
+      iframe.title = 'Nayo Data Migration Tool - demo';
+      iframe.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
+      iframe.allowFullscreen = true;
+      frame.appendChild(iframe);
+      facade.remove();
+    });
+  });
+</script>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // scroll reveal
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll("section .wrap > *, .split > *").forEach(function (el, i) {
+    el.classList.add("rv");
+    if (el.parentElement.classList.contains("split")) el.style.setProperty("--d", (i % 2) * 0.15 + "s");
+    io.observe(el);
+  });
+  // auto-advancing carousels
+  document.querySelectorAll(".carousel").forEach(function (c) {
+    var sl = c.querySelectorAll(".c-slide"), dots = c.querySelector(".c-dots"), i = 0, ms = 5000, tm;
+    c.style.setProperty("--ms", ms + "ms");
+    sl.forEach(function (_, k) {
+      var b = document.createElement("button"); b.type = "button";
+      b.setAttribute("aria-label", "Show feature " + (k + 1)); b.onclick = function () { go(k); };
+      dots.appendChild(b);
+    });
+    function go(k) {
+      i = k; clearTimeout(tm);
+      sl.forEach(function (s, j) { s.classList.toggle("on", j === k); s.setAttribute("aria-hidden", j !== k); });
+      Array.prototype.forEach.call(dots.children, function (b, j) {
+        b.classList.remove("on"); if (j === k) { void b.offsetWidth; b.classList.add("on"); }
+      });
+      if (!still) tm = setTimeout(function () { go((i + 1) % sl.length); }, ms);
+    }
+    function pause(p) { c.classList.toggle("paused", p); if (p) clearTimeout(tm); else go(i); }
+    c.onmouseenter = function () { pause(true); }; c.onmouseleave = function () { pause(false); };
+    c.onfocusin = function () { pause(true); }; c.onfocusout = function () { pause(false); };
+    go(0);
+  });
+})();
+</script>
+</body>
+</html>

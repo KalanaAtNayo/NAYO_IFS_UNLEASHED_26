@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Nayo Products">
+<title>Nayo — Product catalog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+  html, body { margin: 0; background: #F8F5FC; -webkit-font-smoothing: antialiased; }
+  a { color: #007F67; }
+  a:hover { color: #1E0B2E; }
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1E0B2E"></rect><text x="50" y="62" font-family="Arial" font-size="34" font-weight="700" fill="#17F1C2" text-anchor="middle">N</text></svg></template>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; background-color: #F8F5FC; background-image: radial-gradient(#DDD3EA 1.2px, transparent 1.2px); background-size: 28px 28px; font-family: Barlow, 'Helvetica Neue', Arial, sans-serif; color: #1E0B2E; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);">
+
+
+  <main style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: clamp(28px, 5vh, 56px); padding: clamp(32px, 6vh, 72px) clamp(20px, 5vw, 72px); max-width: 1320px; width: 100%; box-sizing: border-box; margin: 0 auto;">
+    <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; max-width: 760px; margin: 0 auto;">
+      <span style="font-family: 'Barlow Condensed', Barlow, sans-serif; font-size: clamp(17px, 1.4vw, 20px); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #007F67;">Product catalog</span>
+      <h1 style="margin: 0; font-size: clamp(36px, 4.4vw, 60px); line-height: 1.05; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance;">Smart tools for IFS Cloud.</h1>
+      <p style="margin: 0; font-size: clamp(17px, 1.4vw, 21px); line-height: 1.5; color: #54446A; text-wrap: pretty;">Select a product to see how it works.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: clamp(16px, 2vw, 28px);">
+
+      <a href="NayoDM/demo.html" style="display: flex; align-items: center; justify-content: center; min-height: clamp(160px, 28vh, 280px); padding: clamp(20px, 2.4vw, 40px); background: #FFFFFF; border: 1px solid #DDD3EA; border-radius: 18px; color: #1E0B2E; text-decoration: none; box-shadow: 0 30px 60px -42px rgba(30, 11, 46, 0.45); transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s; -webkit-tap-highlight-color: transparent;" style-hover="transform: translateY(-4px); border-color: #007F67; box-shadow: 0 36px 70px -40px rgba(0, 127, 103, 0.5); color: #1E0B2E;">
+        <div style="display: flex; align-items: center; justify-content: center;">
+          <img src="NayoDM/assets/nayodm-logo.svg" alt="NayoDM Data Migration" style="height: clamp(48px, 5.6vw, 88px); width: auto; max-width: 100%; display: block;">
+        </div>
+      </a>
+
+      <a href="NayoCP/product-page-v2/demo.html" style="display: flex; align-items: center; justify-content: center; min-height: clamp(160px, 28vh, 280px); padding: clamp(20px, 2.4vw, 40px); background: #FFFFFF; border: 1px solid #DDD3EA; border-radius: 18px; color: #1E0B2E; text-decoration: none; box-shadow: 0 30px 60px -42px rgba(30, 11, 46, 0.45); transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s; -webkit-tap-highlight-color: transparent;" style-hover="transform: translateY(-4px); border-color: #007F67; box-shadow: 0 36px 70px -40px rgba(0, 127, 103, 0.5); color: #1E0B2E;">
+        <div style="display: flex; align-items: center; justify-content: center;">
+          <img src="NayoCP/product-page-v2/assets/nayocp-logo.svg" alt="Nayo Customer Portal" style="height: clamp(54px, 6.3vw, 99px); width: auto; max-width: 100%; display: block;">
+        </div>
+      </a>
+
+      <a href="NayoSS/product-page-v2/demo.html" style="display: flex; align-items: center; justify-content: center; min-height: clamp(160px, 28vh, 280px); padding: clamp(20px, 2.4vw, 40px); background: #FFFFFF; border: 1px solid #DDD3EA; border-radius: 18px; color: #1E0B2E; text-decoration: none; box-shadow: 0 30px 60px -42px rgba(30, 11, 46, 0.45); transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s; -webkit-tap-highlight-color: transparent;" style-hover="transform: translateY(-4px); border-color: #007F67; box-shadow: 0 36px 70px -40px rgba(0, 127, 103, 0.5); color: #1E0B2E;">
+        <div style="display: flex; align-items: center; justify-content: center;">
+          <img src="NayoSS/product-page-v2/assets/nayoss-logo.svg" alt="Nayo Security Suite" style="height: clamp(48px, 5.6vw, 88px); width: auto; max-width: 100%; display: block;">
+        </div>
+      </a>
+
+    </div>
+  </main>
+
+  <footer style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 20px clamp(20px, 5vw, 72px); border-top: 1px solid #DDD3EA; font-size: 14px; color: #75678A;">
+    <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+      <sc-if value="{{ showFs }}" hint-placeholder-val="{{ true }}">
+        <button type="button" onClick="{{ toggleFs }}" aria-label="{{ fsLabel }}" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 1px solid #CDBFE0; border-radius: 999px; background: #FFFFFF; color: #1E0B2E; font-family: inherit; font-size: 14px; cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent;" style-hover="border-color: #007F67; color: #007F67;">
+          <sc-if value="{{ isFs }}" hint-placeholder-val="{{ false }}">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v4H2M16 6h-4V2M12 16v-4h4M2 12h4v4"></path></svg>
+          </sc-if>
+          <sc-if value="{{ notFs }}" hint-placeholder-val="{{ true }}">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6V2h4M12 2h4v4M16 12v4h-4M6 16H2v-4"></path></svg>
+          </sc-if>
+          <span>{{ fsLabel }}</span>
+        </button>
+      </sc-if>
+      <span>© 2026 Nayo Technologies. All rights reserved.</span>
+    </div>
+    <sc-if value="{{ hint }}" hint-placeholder-val="{{ false }}">
+      <div role="status" onClick="{{ hideHint }}" style="position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); max-width: min(92vw, 440px); padding: 14px 18px; border-radius: 12px; background: #1E0B2E; color: #FFFFFF; font-size: 15px; line-height: 1.4; z-index: 50; box-shadow: 0 10px 30px -10px rgba(30, 11, 46, 0.5);">For full screen on iPad: tap Share, then <b>Add to Home Screen</b>, and open from the new icon.</div>
+    </sc-if>
+    <img src="assets/nayo-logo.svg" alt="Nayo Technologies" style="height: 28px; width: auto; display: block;">
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { isFs: false, hint: false };
+  componentDidMount() {
+    this.sync = () => this.setState({ isFs: !!(document.fullscreenElement || document.webkitFullscreenElement) });
+    document.addEventListener('fullscreenchange', this.sync);
+    document.addEventListener('webkitfullscreenchange', this.sync);
+  }
+  componentWillUnmount() {
+    document.removeEventListener('fullscreenchange', this.sync);
+    document.removeEventListener('webkitfullscreenchange', this.sync);
+    clearTimeout(this.ht);
+  }
+  showHint() { this.setState({ hint: true }); clearTimeout(this.ht); this.ht = setTimeout(() => this.setState({ hint: false }), 6000); }
+  renderVals() {
+    const d = document, el = d.documentElement;
+    const standalone = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+    return {
+      showFs: !standalone,
+      isFs: this.state.isFs,
+      notFs: !this.state.isFs,
+      fsLabel: this.state.isFs ? 'Exit full screen' : 'Full screen',
+      hint: this.state.hint,
+      hideHint: () => this.setState({ hint: false }),
+      toggleFs: () => {
+        if (d.fullscreenElement || d.webkitFullscreenElement) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+        const req = el.requestFullscreen || el.webkitRequestFullscreen;
+        if (!req) { this.showHint(); return; }
+        try { const p = req.call(el); if (p && p.catch) p.catch(() => this.showHint()); } catch (e) { this.showHint(); }
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

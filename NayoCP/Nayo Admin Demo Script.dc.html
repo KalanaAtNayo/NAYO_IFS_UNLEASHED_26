@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  doc-page:not(:defined){visibility:hidden}
+  body{margin:0}
+  doc-page{font-family:"IBM Plex Sans",system-ui,sans-serif;color:#15201c}
+  a{color:#1f6b52}
+  a:hover{color:#134534}
+  .scene{break-inside:avoid;orphans:3;widows:3}
+</style>
+<script src="./doc-page.js"></script>
+</helmet>
+<doc-page margin="0.8in">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;border-bottom:2px solid #15201c;padding-bottom:10px;margin-bottom:26px">
+    <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#5c6b64">Nayo Customer Portal</div>
+    <div style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5c6b64">Demo video script · v3 · full walkthrough</div>
+  </div>
+
+  <h1 style="font:600 34px/1.15 'IBM Plex Sans',sans-serif;letter-spacing:-.02em;margin:0 0 12px">Demo Video Script</h1>
+  <p style="font:400 16px/1.6 'IBM Plex Sans',sans-serif;color:#3d4b45;margin:0 0 22px;max-width:46em">A full narrated walkthrough of the Nayo Customer Portal: how an administrator controls access, what a customer user does day to day — orders, shipments, invoices, parts and reports — and how suppliers work their purchase orders.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:#dde5e1;border:1px solid #dde5e1;margin:0 0 30px;break-inside:avoid">
+    <div style="background:#f6f9f7;padding:12px 14px">
+      <div style="font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#5c6b64;margin-bottom:6px">Runtime</div>
+      <div style="font:500 15px/1.3 'IBM Plex Sans',sans-serif">≈ 18 minutes</div>
+    </div>
+    <div style="background:#f6f9f7;padding:12px 14px">
+      <div style="font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#5c6b64;margin-bottom:6px">Audience</div>
+      <div style="font:500 15px/1.3 'IBM Plex Sans',sans-serif">Prospects &amp; new customers</div>
+    </div>
+    <div style="background:#f6f9f7;padding:12px 14px">
+      <div style="font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#5c6b64;margin-bottom:6px">Tone</div>
+      <div style="font:500 15px/1.3 'IBM Plex Sans',sans-serif">Calm, plain, unhurried</div>
+    </div>
+  </div>
+
+  <h2 style="font:600 13px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#1f6b52;margin:0 0 10px">Before you record</h2>
+  <ul style="font:400 15px/1.65 'IBM Plex Sans',sans-serif;color:#26332e;margin:0 0 30px;padding-left:20px;max-width:46em">
+    <li style="margin-bottom:5px">Reset the demo tenant so <strong>Demo Role</strong> and <strong>demo-user</strong> do not already exist.</li>
+    <li style="margin-bottom:5px">Have a second browser profile ready for the final login, so the admin session stays open.</li>
+    <li style="margin-bottom:5px">Keep one vocabulary throughout: <em>permission set</em>, <em>role</em>, <em>group</em>, <em>end user</em>, <em>IFS customer</em>.</li>
+    <li>Pause the voiceover during page loads rather than talking over them — cut the dead frames in the edit.</li>
+  </ul>
+
+  <h2 style="font:600 20px/1.2 'IBM Plex Sans',sans-serif;margin:0 0 4px;padding-bottom:8px;border-bottom:1px solid #dde5e1">Script</h2>
+  <p style="font:400 13px/1.5 'IBM Plex Sans',sans-serif;color:#5c6b64;margin:10px 0 22px">Left column is the on-screen action. Read only the voiceover.</p>
+
+<div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">01 · 0:00–0:35</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">The problem</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Title card: “Nayo Customer Portal”. Then a simple graphic or B-roll — email threads, spreadsheets, phone calls between a company and its customers.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">Most manufacturers and distributors run their business in IFS — but their customers, suppliers and dealers don't.</p>
+      <p style="margin:0 0 10px">So the day-to-day runs on email and phone calls. Where is my order? Has it shipped? Can you resend that invoice? Every question costs somebody time, and none of it is self-service.</p>
+      <p style="margin:0">The obvious answer is to give those external partners access. The problem is they sit outside your IFS user framework — and you can't hand a customer a window into everyone else's data.</p>
+    </div>
+  </div>
+
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">02 · 0:35–1:05</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Product overview</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Cut to the portal landing page as a still, or the product hero shot. Hold while the voiceover plays.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">That's what the Nayo Customer Portal is for. It's an external-facing B2B platform that sits on top of IFS and connects your customers, suppliers and dealers to the data that's already there — in real time.</p>
+      <p style="margin:0">Portal users operate entirely outside the IFS user framework, so you're not consuming IFS licences to give a customer visibility of their own orders. It's fully customizable, integrates with the systems around it, and every user sees exactly what you decide they should see — and nothing else.</p>
+    </div>
+  </div>
+
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">03 · 1:05–1:25</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Agenda</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Agenda card: four lines — 1. The portal at a glance · 2. Admin Portal · 3. Customer Portal · 4. Supplier Portal.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">Here's how the video runs. First, the portal at a glance — the three sections and who sees what.</p>
+      <p style="margin:0">Then the Admin Portal, where we'll build access from the ground up — a role, a user, and the mapping between that user and an IFS customer. Then the Customer Portal, where that user places and tracks orders, and finally the Supplier Portal.</p>
+    </div>
+  </div>
+  <div style="break-inside:avoid;margin:26px 0 0;padding:10px 14px;background:#0f2a22;color:#fff;display:flex;justify-content:space-between;align-items:baseline;gap:16px">
+    <div style="font:600 13px/1.2 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase">Part 1 — The portal at a glance</div>
+    <div style="font:400 12px/1.2 'IBM Plex Sans',sans-serif;color:#9dc4b6">Sections and who sees what</div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">04 · 1:25–2:00</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Landing page</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Open the portal landing page. Hover each of the three sections as it is named.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">This is the landing page of the Nayo Customer Portal. Everything in the portal sits under one of three sections: Customer, Supplier, and Admin.</p>
+      <p style="margin:0 0 10px">The Customer section holds the day-to-day items — Orders, Shipments, Invoices, Part List, Part List with Inventory, and Reports. The Supplier section holds Purchase Orders. And the Admin section is where an administrator manages settings and users.</p>
+      <p style="margin:0">What I'm showing you now is the full picture — an administrator's view.</p>
+    </div>
+  </div>
+
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">05 · 2:00–2:25</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Why access matters</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Stay on the landing page. Optional: cut to a customer user's landing page for two seconds as a teaser.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">An end user does not see all of this. A customer user sees the Customer section only — and inside it, only the components they've been granted.</p>
+      <p style="margin:0">That visibility is what we're going to build in this video. We'll create a role, create a user, give that user access, and then log in as them to confirm exactly what they can see.</p>
+    </div>
+  </div>
+
+  <div style="break-inside:avoid;margin:26px 0 0;padding:10px 14px;background:#0f2a22;color:#fff;display:flex;justify-content:space-between;align-items:baseline;gap:16px">
+    <div style="font:600 13px/1.2 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase">Part 2 — Admin Portal</div>
+    <div style="font:400 12px/1.2 'IBM Plex Sans',sans-serif;color:#9dc4b6">Roles, groups, permissions, users</div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">06 · 2:25–3:00</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Admin Portal → Groups</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Enter Admin. Show the two nav items. Open Roles &amp; Groups → Groups. Click Add New Group, show the modal, then close it.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">Let's start in the Admin Portal. There are two areas here: User Management, and Roles &amp; Groups.</p>
+      <p style="margin:0 0 10px">Roles &amp; Groups has three tabs — Groups, Roles, and Application Permissions. We'll take them in order, because each one builds on the last.</p>
+      <p style="margin:0">Groups lists every group that already exists. To create one, I press Add New Group and the Add New Group modal opens. I'll leave this for now and move to Roles, which is where the access itself is defined.</p>
+    </div>
+  </div>
+
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">07 · 3:00–4:00</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Create <em>Demo Role</em></div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Roles tab → Add New Role. Type slowly: name <strong>Demo Role</strong>, description, then select the customer permission sets. Submit. Highlight the new row.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">The Roles tab lists the roles already configured. I'll create a new one with Add New Role.</p>
+      <p style="margin:0 0 10px">A role needs three things: a name — I'll call this one Demo Role — a short description, and the permission sets it grants. A permission set is simply a bundle of access to one part of the application, so a role is really just a named collection of those bundles.</p>
+      <p style="margin:0">I'll select the customer permission sets and submit. The new role appears in the list with the permission sets I assigned. We'll hand this role to a user in a few minutes.</p>
+    </div>
+  </div>
+
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">08 · 4:00–4:20</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Application Permissions</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Open the tab, scroll the list once, slowly.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0">The third tab, Application Permissions, is the reference list: every permission set available, grouped by the application component it controls. This is the catalogue you pick from when you build a role — it's read-only here.</p>
+    </div>
+  </div>
+
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">09 · 4:20–4:45</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">User Management</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Open User Management. Hover the three action icons in one row as they are named.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">Now to User Management. This view lists every end user in the application.</p>
+      <p style="margin:0">Each row has three actions: Settings, where you manage what the user can do; Advanced User Settings, for identity and credentials; and Delete. Let's open Settings on an existing user first, so the structure is clear before we create one from scratch.</p>
+    </div>
+  </div>
+
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">10 · 4:45–5:55</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">User settings tabs</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Open Settings. Step through Roles → Groups → Customer &amp; Supplier Mapping, pausing on each.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">At the top we have the selected user's details, and below them four tabs: Roles, Groups, Customer &amp; Supplier Mapping, and Has Permissions.</p>
+      <p style="margin:0 0 10px">Roles shows the roles assigned to this user, and roles can be added or removed here. I'll demonstrate that in a moment on the user we create. Groups works the same way for group membership — this user isn't in any group.</p>
+      <p style="margin:0">Customer &amp; Supplier Mapping is the important one. It ties the portal user to a record in IFS — here, to the customer F TEST CUSTOMER. A user can be mapped to a supplier instead, and for coordinator-type users you can map several IFS customers to the same person. The role decides what they can do; the mapping decides whose data they do it to.</p>
+    </div>
+  </div>
+
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">11 · 5:55–6:15</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Has Permissions</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Open the tab. Point at the customer role above, then at the inherited list.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0">Has Permissions is the answer to "what does this user actually have?" It's read-only — every permission set here is inherited from an assigned role. This user has the customer role, so they've inherited all of the customer permission sets.</p>
+    </div>
+  </div>
+
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">12 · 6:15–7:25</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Create <em>demo-user</em></div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Back to the list → Add New User. Fill: username <strong>demo-user</strong>, first name Demo, last name User, email. Toggle email verification off. Submit.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">Let's create a user. Add New User opens the modal.</p>
+      <p style="margin:0 0 10px">Username, demo-user. First name Demo, last name User, and an email address. I'm switching email verification off for this demo — in a real rollout you'd leave it on so the user confirms their own address.</p>
+      <p style="margin:0">Submit, and the portal takes us straight into that user's settings view. Right now this account exists, but it can't do anything: no roles, no mapping, no password.</p>
+    </div>
+  </div>
+
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">13 · 7:25–8:15</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Grant access</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Roles tab: add Demo Role, then Customer. Mapping tab: add FTESTCUSTOMER. Has Permissions: scroll the merged list.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">So let's give it access. On the Roles tab I'll add the Demo Role we created, and the Customer role alongside it.</p>
+      <p style="margin:0 0 10px">Then the mapping — I'll map this user to FTESTCUSTOMER, so they'll only ever see that customer's orders, shipments and invoices.</p>
+      <p style="margin:0">And in Has Permissions you can see the result: the permission sets from both roles, merged into one inherited list. That's the whole model in one screen — roles in, effective access out.</p>
+    </div>
+  </div>
+
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">14 · 8:15–8:50</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Advanced user settings</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">User list → demo-user row → Advanced User Settings. Set the password. Show the confirmation.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">One thing is still missing: credentials. Back in the user list, demo-user is now there with the details we entered. I'll open Advanced User Settings.</p>
+      <p style="margin:0">This is the identity and access management side of the account — where an administrator handles credentials, resets and related settings. I'll set a password. That's done, and the account is ready to use.</p>
+    </div>
+  </div>
+
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">15 · 8:50–9:25</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Log in as demo-user</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Second browser profile. Log in as demo-user. Land on the portal — hold on the landing page for three seconds.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">Let's prove it. I'll sign in as demo-user.</p>
+      <p style="margin:0">And there's the result: the customer items only. No Supplier section, no Admin section — just the components the assigned roles allow, for the one customer this user is mapped to. That's role-based access in the Nayo Customer Portal, end to end.</p>
+    </div>
+  </div>
+
+  <div style="break-inside:avoid;margin:26px 0 0;padding:10px 14px;background:#0f2a22;color:#fff;display:flex;justify-content:space-between;align-items:baseline;gap:16px">
+    <div style="font:600 13px/1.2 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase">Part 3 — Customer Portal</div>
+    <div style="font:400 12px/1.2 'IBM Plex Sans',sans-serif;color:#9dc4b6">Orders, shipments, invoices, parts, reports</div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">16 · 9:25–10:15</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Orders overview</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Log back in as the customer user (or the admin). Open Customer → Orders. Hover the filter icon, then a column search, then the density and screen-size buttons.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">Now the customer side — this is what the end user actually works in day to day.</p>
+      <p style="margin:0 0 10px">Orders opens on the overview: every customer order for this customer, with its status, in a table. The filter button in the top right narrows the list, and each column can be searched individually, so finding one order among thousands is quick.</p>
+      <p style="margin:0">These two buttons control the table itself — toggle density, and screen size — so users can fit more rows on screen or open the table out to full width.</p>
+    </div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">17 · 10:15–11:20</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Order → line → shipment</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Click an order row. Then a line. Choose a line that has a shipment. Scroll to show shipment details on the same page.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">Clicking an order line opens the detail view of that customer order. Click into one of the order lines and you go a level deeper again, to the line details.</p>
+      <p style="margin:0">And this is the part worth watching: if that line has a shipment connected to it, the shipment details appear on the same page. The customer doesn't have to go looking — I'll open a line that's connected to a shipment, and there it is.</p>
+    </div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">18 · 11:20–11:50</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Shipment lines & freight</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Scroll further down the same page. Open Shipment Lines, then Freight Transactions.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">Scrolling further down the same page there are two more tabs: Shipment Lines, and Freight Transactions.</p>
+      <p style="margin:0">Freight Transactions is where the tracking information sits, along with weight and freight charges — so "where is my order" is answered on screen, without anyone picking up the phone.</p>
+    </div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">19 · 11:50–12:40</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Create an order — header</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Back to Orders. Click Create an Order. Fill the header: Customer ID, Site, Customer's PO No, Wanted Delivery Date. Save.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">The portal isn't read-only. Customers can place orders themselves.</p>
+      <p style="margin:0">Back in Orders, there's a Create an Order button at the top of the page. It opens the order entry screen, where I set the header — Customer ID, Site, the customer's own PO number, the wanted delivery date — each from a list of values, so there's nothing free-typed that IFS then has to reconcile. I'll save the header.</p>
+    </div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">20 · 12:40–13:25</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Order lines & availability</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Add a line. Run the availability check. Save the lines.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">Now the order lines. As I add them, I can run an availability check from here — and that's the standard IFS part availability logic, not a separate calculation the portal invented.</p>
+      <p style="margin:0">Once the lines are right, I save them.</p>
+    </div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">21 · 13:25–14:05</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">How it lands in IFS</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Cut to IFS. Show the new order with Order Type WEB, and the cf web order status field.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">Let's see what that looks like on the IFS side. The order is there, and you can tell where it came from: orders placed through the portal carry the order type WEB.</p>
+      <p style="margin:0">There's also a custom field, web order status. While the customer is still entering the order it reads "Entry in progress", and it flips to "Completed" once they finish — so your team never picks up a half-entered order.</p>
+    </div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">22 · 14:05–14:30</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Shipments</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Open Customer → Shipments. Click one shipment to show the detail view briefly.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0">Shipments gives direct access to every shipment created for this customer, without going through the order first. Clicking one opens the same detailed view we saw a moment ago.</p>
+    </div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">23 · 14:30–15:10</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Invoices</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Open Invoices. Click one invoice. Click Download Invoice. Show the print preview.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">Invoices shows the customer invoices raised in IFS. Clicking one opens the detail, and from here the customer can download the invoice themselves with the Download Invoice button.</p>
+      <p style="margin:0">This is the print preview — the same document your finance team would send, self-served.</p>
+    </div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">24 · 15:10–15:35</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Part List</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Open Part List. Scroll once.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0">Part List shows the sales parts available to this customer. These aren't a static catalogue — they're pulled from the customer's IFS agreements, sales price lists and the standard IFS pricing logic, so each customer sees their own parts at their own prices.</p>
+    </div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">25 · 15:35–16:05</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Part List with Inventory</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Open Part List with Inventory, then a detail view showing quantities per site.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0">Part List with Inventory goes one step further and exposes IFS inventory levels to the portal user. In the detail view they can see available quantities site by site — so they can check stock before they place the order, rather than after.</p>
+    </div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">26 · 16:05–16:35</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Reports</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Open Reports. Show the two reports, download one.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0">Reports lets the customer preview and print IFS reports directly. In this example there's a customer statement of account and a price list. This section is configurable — whatever reports your customers ask for can be surfaced here.</p>
+    </div>
+  </div>
+  <div style="break-inside:avoid;margin:26px 0 0;padding:10px 14px;background:#0f2a22;color:#fff;display:flex;justify-content:space-between;align-items:baseline;gap:16px">
+    <div style="font:600 13px/1.2 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase">Part 4 — Supplier Portal</div>
+    <div style="font:400 12px/1.2 'IBM Plex Sans',sans-serif;color:#9dc4b6">Purchase orders and supplier notes</div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">27 · 16:35–17:20</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Purchase Orders</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Switch to the Supplier section. Open Purchase Orders, then one order — show header, part lines and no-part lines.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">The supplier side works on the same principles, from the other direction.</p>
+      <p style="margin:0">Purchase Orders gives suppliers visibility of the purchase orders raised for them in IFS. The detail view shows the header information together with the order lines — both part lines and no-part lines.</p>
+    </div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">28 · 17:20–17:50</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Supplier note</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Show the supplier note field. Edit it in the portal, then show the same note in IFS.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0">Each order carries a supplier note, and it's editable from both ends — the supplier types here, your buyer sees it in IFS, and the reply comes back the same way. Today that note is the communication channel inside the purchase order process, so the conversation stays attached to the order instead of sitting in somebody's inbox.</p>
+    </div>
+  </div>
+  <div class="scene" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;padding:16px 0;border-top:1px solid #e6ece9">
+    <div>
+      <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#1f6b52;margin-bottom:8px">29 · 17:50–18:20</div>
+      <div style="font:600 14px/1.35 'IBM Plex Sans',sans-serif;margin-bottom:8px">Close</div>
+      <div style="font:400 12px/1.55 'IBM Plex Mono',monospace;color:#5c6b64">Return to the portal landing page. Hold. End card with contact details.</div>
+    </div>
+    <div style="font:400 16px/1.7 'IBM Plex Sans',sans-serif;color:#15201c">
+      <p style="margin:0 0 10px">So that's the Nayo Customer Portal: your customers placing and tracking their own orders, your suppliers working their purchase orders, and an administrator deciding precisely who sees what — all on top of the data already in IFS, and all outside the IFS user framework.</p>
+      <p style="margin:0">If you'd like to see it against your own process, get in touch and we'll walk through it with your data.</p>
+    </div>
+  </div>
+  <h2 style="font:600 13px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#1f6b52;margin:28px 0 10px">Open questions</h2>
+  <ul style="font:400 15px/1.65 'IBM Plex Sans',sans-serif;color:#26332e;margin:0;padding-left:20px;max-width:46em">
+    <li style="margin-bottom:5px">Scene 06 skips creating a group. If groups matter to the audience, add ~20 seconds showing a group being created and a user added to it — otherwise cut the Groups tab to a single sentence.</li>
+    <li style="margin-bottom:5px">Confirm the exact field labels in the Add New Role and Add New User modals so the voiceover matches the UI word for word.</li>
+    <li>Eighteen minutes is long for a sales asset — consider cutting a five-minute highlight version (scenes 01–03, 12–13, 15–17, 19–21, 27, 29) from the same footage.</li>
+  </ul>
+</doc-page>
+</x-dc>
+</body>
+</html>
